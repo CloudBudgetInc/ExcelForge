@@ -38,7 +38,9 @@
 
 			<lightning-button-group>
 				<template for:each={tabs} for:item="tab">
-					<lightning-button key={tab.value} label={tab.label} class={tab.class}
+					<lightning-button key={tab.value} label={tab.label} class={tab.class} ondblclick={showSheetSetup}
+									  title="Double Click to Setup"
+									  onclick={changeSheet}
 									  value={tab.value}></lightning-button>
 				</template>
 				<lightning-button label='Add' icon-name="utility:add" class="tabButton"></lightning-button>
@@ -47,6 +49,10 @@
 		</template>
 
 	</div>
+
+	<template lwc:if={showSheetSetupDialog}>
+		<c-ef-sheet-setup record-id={openedSheet.Id} template-id={recordId}></c-ef-sheet-setup>
+	</template>
 
 
 </template>

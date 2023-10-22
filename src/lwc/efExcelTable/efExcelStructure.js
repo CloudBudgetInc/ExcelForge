@@ -39,7 +39,7 @@ const generateTable = () => {
 const generateSheet = (sheet) => {
 	console.log('GENERATE SHEET : ' + sheet.Name);
 	try {
-		const tableSheet = {letterHeaders: [], rows: []}; // list of rows
+		const tableSheet = {letterHeaders: [], rows: [], Id: sheet.Id}; // list of rows
 		const sheetId = sheet.Id.substring(0, 15);
 		const columns = c.columns.filter(col => col.exf__EFSheet__c.substring(0, 15) === sheetId);
 		const rows = c.rows.filter(row => row.exf__EFSheet__c.substring(0, 15) === sheetId);

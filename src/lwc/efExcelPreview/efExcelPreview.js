@@ -59,6 +59,7 @@ export default class EFExcelPreview extends LightningElement {
 
 	doInit = async () => {
 		try {
+			this.showTable = false;
 			this.showSpinner = true;
 			this.tableStructure = {};
 			await this.getTemplate();
@@ -110,5 +111,10 @@ export default class EFExcelPreview extends LightningElement {
 			.then(sObjects => this.sObjectsMap[dsId] = sObjects)
 			.catch(e => _parseServerError('Get sObjects Error : ' + e))
 	};
+
+	constructor() {
+		super();
+		this.addEventListener("doInit", this.doInit);
+	}
 
 }

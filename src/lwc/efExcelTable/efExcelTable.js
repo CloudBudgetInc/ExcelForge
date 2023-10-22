@@ -25,6 +25,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {api, LightningElement, track} from 'lwc';
 import {generateTable, generateTabs, setContext} from "./efExcelStructure";
+import {_getCopy} from "c/efUtils";
 
 export default class EFExcelTable extends LightningElement {
 
@@ -45,6 +46,7 @@ export default class EFExcelTable extends LightningElement {
 	@track tabs = [];
 
 	@track readyToRender = false;
+	@track showSheetSetupDialog = false;
 
 	connectedCallback() {
 		this.readyToRender = false;
@@ -54,19 +56,47 @@ export default class EFExcelTable extends LightningElement {
 		this.rows = this.tableStructure.rows;
 		this.cells = this.tableStructure.cells;
 		this.styles = this.tableStructure.styles;
-
 		const prepareData = () => {
-			console.log('-------------- HERE -------------------');
 			setContext(this);
 			generateTabs();
 			generateTable();
 			this.readyToRender = true;
 			this.showSpinner = false;
 		};
-
 		setTimeout(prepareData, 100);
-
-
 	};
+
+	/**
+	 * User selected another sheet
+	 */
+	changeSheet = (event) => {
+		const selectedSheetId = event.target.value;
+		this.openedSheet = this.allSheets.find(sheet => sheet.Id === selectedSheetId);
+		this.tabs.forEach(tab => tab.class = tab.value === selectedSheetId ? 'selectedButton' : '');
+		this.tabs = _getCopy(this.tabs);
+	};
+
+	showSheetSetup = (event) => {
+		this.changeSheet(event);
+		this.showSheetSetupDialog = true;
+	};
+
+	closeSheetSetup = () => {
+		this.showSheetSetupDialog = false;
+		this.reloadAllData();
+	};
+
+	reloadAllData = () => {
+		this.dispatchEvent(new CustomEvent('doInit', {
+			bubbles: true,
+			composed: true,
+			detail: '_'
+		}));
+	};
+
+	constructor() {
+		super();
+		this.addEventListener("closeSheetSetup", this.closeSheetSetup);
+	}
 
 }
