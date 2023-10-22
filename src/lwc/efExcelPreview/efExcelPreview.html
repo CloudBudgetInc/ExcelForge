@@ -1,0 +1,14 @@
+<template>
+
+	<!-- SPINNER -->
+	<c-ef-spinner show={showSpinner}></c-ef-spinner>
+	<!-- SPINNER -->
+
+	<lightning-card title="EF Excel Preview">
+		<template lwc:if={showTable}>
+			<div style="overflow: auto; width: 100%">
+				<c-ef-excel-table table-structure={tableStructure} s-objects-map={sObjectsMap}></c-ef-excel-table>
+			</div>
+		</template>
+	</lightning-card>
+</template>
