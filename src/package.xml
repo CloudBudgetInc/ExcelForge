@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>*</members>
+        <members>EFCellSelector</members>
+        <members>EFColumnSelector</members>
+        <members>EFDataSetSelector</members>
+        <members>EFRowSelector</members>
+        <members>EFSObjectSelector</members>
+        <members>EFSheetSelector</members>
+        <members>EFStyleSelector</members>
+        <members>EFTemplateSelector</members>
         <name>ApexClass</name>
     </types>
     <types>
-        <members>*</members>
-        <name>ApexComponent</name>
+        <members>Account</members>
+        <members>Activity</members>
+        <members>Asset</members>
+        <members>Campaign</members>
+        <members>Case</members>
+        <members>Contact</members>
+        <members>Contract</members>
+        <members>EFCell__c</members>
+        <members>EFColumn__c</members>
+        <members>EFDataSet__c</members>
+        <members>EFRow__c</members>
+        <members>EFSheet__c</members>
+        <members>EFStyle__c</members>
+        <members>EFTemplate__c</members>
+        <members>Lead</members>
+        <members>MessagingEndUser</members>
+        <members>Opportunity</members>
+        <members>Order</members>
+        <members>Product2</members>
+        <members>Solution</members>
+        <members>User</members>
+        <name>CustomObject</name>
     </types>
     <types>
-        <members>*</members>
-        <name>ApexPage</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>ApexTestSuite</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>ApexTrigger</name>
-    </types>
-    <types>
-        <members>*</members>
+        <members>efExcelPreview</members>
+        <members>efExcelTable</members>
+        <members>efSpinner</members>
+        <members>efUtils</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
@@ -185,10 +203,6 @@
         <members>WorkTypeGroup.All_WorkTypeGroups</members>
         <members>WorkTypeGroup.My_WorkTypeGroups</members>
         <name>ListView</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>StaticResource</name>
     </types>
     <version>48.0</version>
 </Package>

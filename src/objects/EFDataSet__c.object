@@ -128,11 +128,14 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <type>Default</type>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>EF_Data_Set_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <formFactor>Large</formFactor>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -161,30 +164,6 @@
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
-    </fields>
-    <fields>
-        <fullName>EFCell__c</fullName>
-        <deleteConstraint>SetNull</deleteConstraint>
-        <externalId>false</externalId>
-        <label>EF Cell</label>
-        <referenceTo>EFCell__c</referenceTo>
-        <relationshipLabel>EF Data Sets</relationshipLabel>
-        <relationshipName>EFDataSets</relationshipName>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Lookup</type>
-    </fields>
-    <fields>
-        <fullName>EFTemplate__c</fullName>
-        <deleteConstraint>Restrict</deleteConstraint>
-        <externalId>false</externalId>
-        <label>EF Template</label>
-        <referenceTo>EFTemplate__c</referenceTo>
-        <relationshipLabel>EF Data Sets</relationshipLabel>
-        <relationshipName>EFDataSets</relationshipName>
-        <required>true</required>
-        <trackTrending>false</trackTrending>
-        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Fields__c</fullName>
@@ -226,7 +205,7 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>TotalOnTop__c</fullName>
+        <fullName>TotalonTop__c</fullName>
         <defaultValue>true</defaultValue>
         <externalId>false</externalId>
         <label>Total on Top</label>
