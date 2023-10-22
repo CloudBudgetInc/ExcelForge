@@ -6,17 +6,28 @@
 }
 
 .exTable {
-    table-layout:fixed;
+    table-layout: fixed;
     display: block;
 }
+
 .exTable td {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 td div {
     overflow: hidden;
 }
 
 .exTable, th, td {
     border: 1px solid;
+}
+
+.tabButton {
+    --slds-c-button-radius-border: 0;
+
+}
+
+.selectedButton {
+    --slds-c-button-neutral-color-background: #dadada;
 }

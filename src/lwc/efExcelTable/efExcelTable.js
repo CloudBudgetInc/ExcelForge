@@ -24,7 +24,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 import {api, LightningElement, track} from 'lwc';
-import {generateTable, setContext} from "./efExcelStructure";
+import {generateTable, generateTabs, setContext} from "./efExcelStructure";
 
 export default class EFExcelTable extends LightningElement {
 
@@ -39,16 +39,34 @@ export default class EFExcelTable extends LightningElement {
 	@track styles = [];
 	/// TABLE
 	@track letterHeaders = [];
+	@track allSheets = [];
 	@track openedSheet;
 
+	@track tabs = [];
+
+	@track readyToRender = false;
+
 	connectedCallback() {
+		this.readyToRender = false;
+		this.showSpinner = true;
 		this.sheets = this.tableStructure.sheets;
 		this.columns = this.tableStructure.columns;
 		this.rows = this.tableStructure.rows;
 		this.cells = this.tableStructure.cells;
 		this.styles = this.tableStructure.styles;
-		setContext(this);
-		generateTable();
+
+		const prepareData = () => {
+			console.log('-------------- HERE -------------------');
+			setContext(this);
+			generateTabs();
+			generateTable();
+			this.readyToRender = true;
+			this.showSpinner = false;
+		};
+
+		setTimeout(prepareData, 100);
+
+
 	};
 
 }

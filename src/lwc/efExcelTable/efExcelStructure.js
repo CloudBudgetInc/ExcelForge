@@ -11,20 +11,33 @@ const setContext = (context) => {
 	c = context;
 };
 
+const generateTabs = () => {
+	c.tabs = [];
+	c.sheets.forEach((sheet, i) => c.tabs.push({
+		label: sheet.Name,
+		value: sheet.Id,
+		class: i === 0 ? 'selectedButton' : ''
+	}));
+};
+
 const generateTable = () => {
+	console.log('GENERATE TABLE');
 	try {
 		styleMap = c.styles.reduce((r, st) => {
 			r[st.Id] = st;
 			return r;
 		}, {});
 		console.log('Style Map = ' + JSON.stringify(styleMap));
-		c.sheets.forEach(sheet => generateSheet(sheet));
+		c.sheets.forEach(sheet => c.allSheets.push(generateSheet(sheet)));
+		c.openedSheet = c.allSheets[0];
+		console.log('OPENED SHEET : ' + JSON.stringify(c.openedSheet));
 	} catch (e) {
 		_message('error', 'Generate Table Error : ' + e);
 	}
 };
 
 const generateSheet = (sheet) => {
+	console.log('GENERATE SHEET : ' + sheet.Name);
 	try {
 		const tableSheet = {letterHeaders: [], rows: []}; // list of rows
 		const sheetId = sheet.Id.substring(0, 15);
@@ -36,7 +49,7 @@ const generateSheet = (sheet) => {
 		console.log('Cells : ' + JSON.stringify(cells));
 		setExcelTopHeader(tableSheet, columns);
 		setExcelRows(tableSheet, rows, cells);
-		c.openedSheet = tableSheet;
+		return tableSheet;
 	} catch (e) {
 		_message('error', 'Generate Sheet Error : ' + e);
 	}
@@ -161,4 +174,4 @@ const generateExcelAlphabetArray = (length) => {
 	return result;
 };
 
-export {setContext, generateTable};
+export {setContext, generateTable, generateTabs};
