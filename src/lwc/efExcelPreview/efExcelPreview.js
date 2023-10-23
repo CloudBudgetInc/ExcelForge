@@ -84,6 +84,7 @@ export default class EFExcelPreview extends LightningElement {
 				r[f] = this[f];
 				return r;
 			}, {});
+
 			console.log(JSON.stringify(this.tableStructure));
 			this.showTable = true;
 			this.showSpinner = false;

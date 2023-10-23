@@ -33,4 +33,9 @@ public with sharing class EFPageController {
 		return sheet.Id;
 	}
 
+	@AuraEnabled
+	public static void deleteSheetServer(String sheetId) {
+		Database.delete(sheetId);
+	}
+
 }

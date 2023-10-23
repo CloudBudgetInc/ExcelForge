@@ -1,4 +1,6 @@
 import {ShowToastEvent} from "lightning/platformShowToastEvent";
+import LightningConfirm from 'lightning/confirm';
+import LightningPrompt from 'lightning/prompt';
 
 const FAKE_STR = `fake-id`;
 let timerStartValue = 0;
@@ -186,6 +188,40 @@ const _setCell = (cell, value, fill, font, numFmt, alignment, border) => {
 	cell.border = border;
 };
 
+/**
+ * Method to popup a SF confirm window
+ * @param message "Are you sure you want to ...."
+ * @param label header may be undefined
+ * @param theme  success || info || warning || error
+ */
+const _confirm = async (message, label, theme) => {
+	const config = {
+		message,
+		label,
+		variant: label ? 'header' : 'headerless',
+		theme: theme ? theme : 'info'
+	};
+	return await LightningConfirm.open(config);
+};
+
+/**
+ * Method to popup a SF prompt window
+ * @param message "Type a new name"
+ * @param defaultValue "Something default"
+ * @param label header may be undefined
+ * @param theme  success || info || warning || error
+ */
+const _prompt = async (message, defaultValue, label, theme) => {
+	const config = {
+		message,
+		defaultValue,
+		label,
+		variant: label ? 'header' : 'headerless',
+		theme: theme ? theme : 'info'
+	};
+	return await LightningPrompt.open(config);
+};
+
 export {
 	_generateFakeId,
 	_isFakeId,
@@ -198,5 +234,7 @@ export {
 	_reduceErrors,
 	_getCopy,
 	_parseServerError,
-	_setCell
+	_setCell,
+	_confirm,
+	_prompt
 };

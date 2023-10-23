@@ -25,7 +25,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {api, LightningElement, track} from 'lwc';
 import {generateTable, generateTabs, setContext} from "./efExcelStructure";
-import {_getCopy} from "c/efUtils";
+import {_getCopy, _message} from "c/efUtils";
 
 export default class EFExcelTable extends LightningElement {
 
@@ -33,6 +33,7 @@ export default class EFExcelTable extends LightningElement {
 	@api sObjectsMap = {};
 
 	@track showSpinner = false;
+	@track template = {};
 	@track sheets = [];
 	@track columns = [];
 	@track rows = [];
@@ -51,6 +52,7 @@ export default class EFExcelTable extends LightningElement {
 	connectedCallback() {
 		this.readyToRender = false;
 		this.showSpinner = true;
+		this.template = this.tableStructure.template;
 		this.sheets = this.tableStructure.sheets;
 		this.columns = this.tableStructure.columns;
 		this.rows = this.tableStructure.rows;
@@ -72,13 +74,22 @@ export default class EFExcelTable extends LightningElement {
 	changeSheet = (event) => {
 		const selectedSheetId = event.target.value;
 		this.openedSheet = this.allSheets.find(sheet => sheet.Id === selectedSheetId);
+		this.openedSheet = _getCopy(this.openedSheet);
 		this.tabs.forEach(tab => tab.class = tab.value === selectedSheetId ? 'selectedButton' : '');
 		this.tabs = _getCopy(this.tabs);
 	};
 
 	showSheetSetup = (event) => {
-		this.changeSheet(event);
-		this.showSheetSetupDialog = true;
+		try {
+			if (event.target.value) {
+				this.changeSheet(event);
+			} else {
+				this.openedSheet.Id = null;
+			}
+			this.showSheetSetupDialog = true;
+		} catch (e) {
+			_message('error', 'Show Sheet Setup Error : ' + e);
+		}
 	};
 
 	closeSheetSetup = () => {

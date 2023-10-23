@@ -43,7 +43,8 @@
 									  onclick={changeSheet}
 									  value={tab.value}></lightning-button>
 				</template>
-				<lightning-button label='Add' icon-name="utility:add" class="tabButton"></lightning-button>
+				<lightning-button label='Add' icon-name="utility:add" class="tabButton"
+								  ondblclick={showSheetSetup} onclick={showSheetSetup}></lightning-button>
 			</lightning-button-group>
 
 		</template>
@@ -51,7 +52,7 @@
 	</div>
 
 	<template lwc:if={showSheetSetupDialog}>
-		<c-ef-sheet-setup record-id={openedSheet.Id} template-id={recordId}></c-ef-sheet-setup>
+		<c-ef-sheet-setup record-id={openedSheet.Id} template-id={template.Id}></c-ef-sheet-setup>
 	</template>
 
 
