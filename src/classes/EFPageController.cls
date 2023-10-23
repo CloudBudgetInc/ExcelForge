@@ -46,4 +46,16 @@ public with sharing class EFPageController {
 		return sheet.Id;
 	}
 
+	@AuraEnabled
+	public static String saveColumnServer(EFColumn__c column) {
+		System.debug('COL: ' + column);
+		upsert column;
+		return column.Id;
+	}
+
+	@AuraEnabled
+	public static void deleteColumnServer(String columnId) {
+		Database.delete(columnId);
+	}
+
 }

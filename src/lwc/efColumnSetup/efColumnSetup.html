@@ -1,0 +1,54 @@
+<template>
+
+	<!-- SPINNER -->
+	<c-ef-spinner show={showSpinner}></c-ef-spinner>
+	<!-- SPINNER -->
+
+	<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+			 class="slds-modal slds-fade-in-open slds-modal_large">
+		<div class="slds-modal__container">
+			<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+				<svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+					<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+				</svg>
+				<span class="slds-assistive-text">Cancel and close</span>
+			</button>
+			<div class="slds-modal__header">
+				<h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">EF Column Setup</h1>
+			</div>
+
+			<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+
+				<lightning-layout>
+					<lightning-layout-item>
+						<lightning-input label="Name" value={column.Name} name="Name"
+										 onchange={handleChanges}></lightning-input>
+					</lightning-layout-item>
+					<lightning-layout-item>
+						<lightning-input label="Width" value={column.exf__Width__c} name="exf__Width__c"
+										 onchange={handleChanges}></lightning-input>
+					</lightning-layout-item>
+					<lightning-layout-item>
+						<lightning-input label="Order Number" value={column.exf__Index__c} name="exf__Index__c"
+										 disabled></lightning-input>
+					</lightning-layout-item>
+				</lightning-layout>
+
+
+			</div>
+
+			<div class="slds-modal__footer">
+				<lightning-button-group class="slds-m-right__medium">
+					<lightning-button label="Delete" variant="destructive" onclick={deleteColumn}></lightning-button>
+				</lightning-button-group>
+				<lightning-button-group>
+					<lightning-button label="Save" variant="success" onclick={saveColumn}></lightning-button>
+					<lightning-button label="Close" onclick={closeColumnSetup}></lightning-button>
+				</lightning-button-group>
+			</div>
+		</div>
+	</section>
+	<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+
+
+</template>

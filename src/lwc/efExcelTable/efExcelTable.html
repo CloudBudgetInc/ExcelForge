@@ -7,12 +7,13 @@
 		<!-- SPINNER -->
 
 		<template lwc:if={readyToRender}>
-
 			<table class="exTable">
 				<!-- Letter header -->
 				<tr>
 					<template for:each={openedSheet.letterHeaders} for:item="letterObject">
-						<td key={letterObject} style={letterObject.s} class="excelHeader">
+						<td key={letterObject} style={letterObject.s} class="excelHeader" data-colid={letterObject.Id}
+							data-idx={letterObject.idx}
+							ondblclick={showColumnSetup}>
 							<div>{letterObject.letter}</div>
 						</td>
 					</template>
@@ -53,6 +54,9 @@
 
 	<template lwc:if={showSheetSetupDialog}>
 		<c-ef-sheet-setup record-id={openedSheet.Id} template-id={template.Id}></c-ef-sheet-setup>
+	</template>
+	<template lwc:if={showColumnSetupDialog}>
+		<c-ef-column-setup record-id={selectedColumnId} sheet-id={openedSheet.Id}></c-ef-column-setup>
 	</template>
 
 

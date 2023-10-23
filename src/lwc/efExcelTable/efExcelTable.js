@@ -43,11 +43,13 @@ export default class EFExcelTable extends LightningElement {
 	@track letterHeaders = [];
 	@track allSheets = [];
 	@track openedSheet;
+	@track selectedColumnId;
 
 	@track tabs = [];
 
 	@track readyToRender = false;
 	@track showSheetSetupDialog = false;
+	@track showColumnSetupDialog = false;
 
 	connectedCallback() {
 		this.readyToRender = false;
@@ -92,8 +94,23 @@ export default class EFExcelTable extends LightningElement {
 		}
 	};
 
+	showColumnSetup = (event) => {
+		try {
+			this.selectedColumnId = event.currentTarget.dataset.colid;
+			if (!this.selectedColumnId) this.selectedColumnId = event.currentTarget.dataset.idx;
+			this.showColumnSetupDialog = true;
+		} catch (e) {
+			_message('error', 'Show Column Setup Error : ' + e);
+		}
+	};
+
 	closeSheetSetup = () => {
 		this.showSheetSetupDialog = false;
+		this.reloadAllData();
+	};
+
+	closeColumnSetup = () => {
+		this.showColumnSetupDialog = false;
 		this.reloadAllData();
 	};
 
@@ -108,6 +125,7 @@ export default class EFExcelTable extends LightningElement {
 	constructor() {
 		super();
 		this.addEventListener("closeSheetSetup", this.closeSheetSetup);
+		this.addEventListener("closeColumnSetup", this.closeColumnSetup);
 	}
 
 }

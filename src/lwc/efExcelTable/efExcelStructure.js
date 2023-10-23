@@ -59,15 +59,15 @@ const setExcelTopHeader = (tableSheet, columns) => {
 	try {
 		tableSheet.letterHeaders = [{s: `width: 40px`, letter: ''}];
 		const columnsMap = columns.reduce((r, col) => {
-			r[col.exf__Index__c] = col.exf__Width__c;
+			r[col.exf__Index__c] = col;
 			return r;
 		}, {});
 		console.log('COL MAP:' + JSON.stringify(columnsMap));
 		generateExcelAlphabetArray(MIN_SHEET_WIDTH).forEach((letter, i) => {
-			const indicatedColumnWidth = columnsMap[i + 1];
-			console.log('col #' + (i + 1) + ' width: ' + indicatedColumnWidth);
-			const width = indicatedColumnWidth ? indicatedColumnWidth : defaultColumnWidth;
-			tableSheet.letterHeaders.push({s: `width: ${width}px`, letter});
+			const indicatedColumn = columnsMap[i + 1];
+			console.log('col #' + (i + 1) + ' width: ' + indicatedColumn?.exf__Width__c);
+			const width = indicatedColumn?.exf__Width__c ? indicatedColumn?.exf__Width__c : defaultColumnWidth;
+			tableSheet.letterHeaders.push({s: `width: ${width}px`, letter, Id: indicatedColumn?.Id, idx: i + 1});
 		});
 	} catch (e) {
 		_message('error', 'Set Excel Top Borders Error : ' + e);
