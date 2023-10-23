@@ -24,6 +24,14 @@
 						<lightning-input label="Name" value={sheet.Name} name="Name"
 										 onchange={handleChanges}></lightning-input>
 					</lightning-layout-item>
+					<lightning-layout-item>
+						<lightning-input label="X Split" value={sheet.exf__XSplit__c} name="exf__XSplit__c"
+										 onchange={handleChanges}></lightning-input>
+					</lightning-layout-item>
+					<lightning-layout-item>
+						<lightning-input label="Y Split" value={sheet.exf__YSplit__c} name="exf__YSplit__c"
+										 onchange={handleChanges}></lightning-input>
+					</lightning-layout-item>
 				</lightning-layout>
 
 
@@ -32,6 +40,7 @@
 			<div class="slds-modal__footer">
 				<lightning-button-group class="slds-m-right__medium">
 					<lightning-button label="Delete" variant="destructive" onclick={deleteSheet}></lightning-button>
+					<lightning-button label="Clone" onclick={cloneSheet}></lightning-button>
 				</lightning-button-group>
 				<lightning-button-group>
 					<lightning-button label="Save" variant="success" onclick={saveSheet}></lightning-button>

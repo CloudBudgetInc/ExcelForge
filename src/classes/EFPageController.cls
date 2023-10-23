@@ -38,4 +38,12 @@ public with sharing class EFPageController {
 		Database.delete(sheetId);
 	}
 
+	@AuraEnabled
+	public static String cloneSheetServer(EFSheet__c sheet) {
+		sheet.Name = 'Cloned ' + sheet.Name;
+		sheet.Id = null;
+		insert sheet;
+		return sheet.Id;
+	}
+
 }

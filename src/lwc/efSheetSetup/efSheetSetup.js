@@ -28,6 +28,7 @@ import {_confirm, _message, _parseServerError} from "c/efUtils";
 import getEFSheetByIdServer from '@salesforce/apex/EFSheetSelector.getEFSheetByIdServer';
 import saveSheetServer from '@salesforce/apex/EFPageController.saveSheetServer';
 import deleteSheetServer from '@salesforce/apex/EFPageController.deleteSheetServer';
+import cloneSheetServer from '@salesforce/apex/EFPageController.cloneSheetServer';
 
 
 export default class EFSheetSetup extends LightningElement {
@@ -74,6 +75,16 @@ export default class EFSheetSetup extends LightningElement {
 		_message('success', 'Deleted');
 		this.showSpinner = false;
 		this.closeSheetSetup();
+	};
+
+	cloneSheet = async () => {
+		const confirmed = await _confirm('Are you sure to clone the sheet?', 'Confirm', 'warning');
+		if (!confirmed) return null;
+		this.showSpinner = true;
+		this.recordId = await cloneSheetServer({sheet: this.sheet}).catch(e => _parseServerError('Cloning Sheet Error : ', e));
+		await this.getSheet();
+		_message('success', 'Cloned');
+		this.showSpinner = false;
 	};
 
 	handleChanges = (event) => this.sheet[event.target.name] = event.target.value;
