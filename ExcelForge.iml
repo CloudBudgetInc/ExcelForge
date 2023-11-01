@@ -2273,6 +2273,11 @@
                             <option name="name" value="efColumnSetup" />
                             <option name="selected" value="true" />
                           </MetadataEntry>
+                          <MetadataEntry>
+                            <option name="folder" value="true" />
+                            <option name="name" value="efCellSetup" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
                         </list>
                       </option>
                       <option name="name" value="LightningComponentBundle" />

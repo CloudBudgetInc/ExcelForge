@@ -58,4 +58,28 @@ public with sharing class EFPageController {
 		Database.delete(columnId);
 	}
 
+	@AuraEnabled
+	public static String saveCellServer(EFCell__c cell, String sheetId, Integer rowIdx, Integer colIdx) {
+		System.debug('ROW:' + rowIdx);
+		System.debug('COL:' + colIdx);
+		System.debug('SHEET:' + sheetId);
+		List<EFRow__c> rows = EFRowSelector.getEFRowsByFilterServer('EFSheet__c = \'' + sheetId + '\' AND Index__c = ' + rowIdx);
+		EFRow__c row;
+		if (rows.size() > 0) {
+			row = rows[0]; // row was created before
+		} else {
+			row = new EFRow__c(EFSheet__c = sheetId, Index__c = rowIdx);
+			insert row;
+		}
+		cell.EFRow__c = row.Id;
+		cell.Index__c = colIdx;
+		upsert cell;
+		return cell.Id;
+	}
+
+	@AuraEnabled
+	public static void deleteCellServer(String cellId) {
+		Database.delete(cellId);
+	}
+
 }

@@ -29,11 +29,25 @@ public with sharing class EFCellSelector {
 
 	@AuraEnabled
 	public static EFCell__c getEFCellByIdServer(String tId) {
-		return [SELECT Id,Name,Index__c,Value__c,Formula__c,EFRow__c,EFStyle__c,NumberFormat__c,EFRowIndex__c,EFSheet__c,EFDataSet__c,DataSetField__c FROM EFCell__c WHERE Id = :tId];
+		return [SELECT Id,Name,Index__c,Value__c,Formula__c,EFRow__c,EFStyle__c,NumberFormat__c,EFRowIndex__c,EFSheet__c,EFDataSet__c,
+				DataSetField__c,exf__CellCoordinate__c FROM EFCell__c WHERE Id = :tId];
+	}
+
+	@AuraEnabled
+	public static EFCell__c getEFCellByCoordinateServer(Integer rowIdx, Integer colIdx, String sheetId) {
+		sheetId = sheetId.left(15);
+		System.debug('X:' + rowIdx + ' Y:' + colIdx + ' SHEET:' + sheetId);
+		List<EFCell__c> cells = [
+				SELECT Id,Name,Index__c,Value__c,Formula__c,EFRow__c,EFStyle__c,NumberFormat__c,EFRowIndex__c,EFSheet__c,EFDataSet__c,DataSetField__c,exf__CellCoordinate__c
+				FROM EFCell__c
+				WHERE EFSheet__c = :sheetId AND EFRowIndex__c = :rowIdx AND Index__c = :colIdx
+		];
+		System.debug('Cells: ' + cells);
+		return cells.size() > 0 ? cells[0] : null;
 	}
 
 	@AuraEnabled
 	public static List<EFCell__c> getAllEFCellsByTemplateIdServer(String tId) {
-		return [SELECT Id,Name,Index__c,Value__c,Formula__c,EFRow__c,EFStyle__c,NumberFormat__c,EFRowIndex__c,EFSheet__c,EFDataSet__c,DataSetField__c FROM EFCell__c WHERE EFRow__r.EFSheet__r.EFTemplate__c = :tId ORDER BY Index__c LIMIT 5000];
+		return [SELECT Id,Name,Index__c,Value__c,Formula__c,EFRow__c,EFStyle__c,NumberFormat__c,EFRowIndex__c,EFSheet__c,EFDataSet__c,DataSetField__c,exf__CellCoordinate__c FROM EFCell__c WHERE EFRow__r.EFSheet__r.EFTemplate__c = :tId ORDER BY Index__c LIMIT 5000];
 	}
 }

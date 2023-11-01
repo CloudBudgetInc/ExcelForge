@@ -44,12 +44,14 @@ export default class EFExcelTable extends LightningElement {
 	@track allSheets = [];
 	@track openedSheet;
 	@track selectedColumnId;
+	@track selectedCellCoordinate;
 
 	@track tabs = [];
 
 	@track readyToRender = false;
 	@track showSheetSetupDialog = false;
 	@track showColumnSetupDialog = false;
+	@track showCellSetupDialog = false;
 
 	connectedCallback() {
 		this.readyToRender = false;
@@ -104,14 +106,23 @@ export default class EFExcelTable extends LightningElement {
 		}
 	};
 
-	closeSheetSetup = () => {
-		this.showSheetSetupDialog = false;
-		this.reloadAllData();
+	showCellSetup = (event) => {
+		try {
+			this.selectedCellCoordinate = `${event.currentTarget.dataset.rowidx},${event.currentTarget.dataset.colidx}`;
+			this.showCellSetupDialog = true;
+		} catch (e) {
+			_message('error', 'Show Cell Setup Error : ' + e);
+		}
 	};
 
-	closeColumnSetup = () => {
+	closeSetupDialog = (event) => {
+		const detail = event.detail;
+		this.showSheetSetupDialog = false;
 		this.showColumnSetupDialog = false;
-		this.reloadAllData();
+		this.showCellSetupDialog = false;
+		if (event.detail.reloadMainComponent) {
+			this.reloadAllData();
+		}
 	};
 
 	reloadAllData = () => {
@@ -124,8 +135,7 @@ export default class EFExcelTable extends LightningElement {
 
 	constructor() {
 		super();
-		this.addEventListener("closeSheetSetup", this.closeSheetSetup);
-		this.addEventListener("closeColumnSetup", this.closeColumnSetup);
+		this.addEventListener("closeSetupDialog", this.closeSetupDialog);
 	}
 
 }

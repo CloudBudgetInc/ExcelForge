@@ -37,6 +37,7 @@ export default class EFSheetSetup extends LightningElement {
 	@api templateId;
 	@track showSpinner = false;
 	@track sheet = {};
+	@track reloadMainComponent = false;
 
 	async connectedCallback() {
 		this.doInit();
@@ -65,6 +66,7 @@ export default class EFSheetSetup extends LightningElement {
 		await this.getSheet();
 		_message('success', 'Saved');
 		this.showSpinner = false;
+		this.reloadMainComponent = true;
 	};
 
 	deleteSheet = async () => {
@@ -75,6 +77,7 @@ export default class EFSheetSetup extends LightningElement {
 		_message('success', 'Deleted');
 		this.showSpinner = false;
 		this.closeSheetSetup();
+		this.reloadMainComponent = true;
 	};
 
 	cloneSheet = async () => {
@@ -85,15 +88,16 @@ export default class EFSheetSetup extends LightningElement {
 		await this.getSheet();
 		_message('success', 'Cloned');
 		this.showSpinner = false;
+		this.reloadMainComponent = true;
 	};
 
 	handleChanges = (event) => this.sheet[event.target.name] = event.target.value;
 
 	closeSheetSetup = () => {
-		this.dispatchEvent(new CustomEvent('closeSheetSetup', {
+		this.dispatchEvent(new CustomEvent('closeSetupDialog', {
 			bubbles: true,
 			composed: true,
-			detail: '_'
+			detail: {reloadMainComponent: this.reloadMainComponent}
 		}));
 	};
 

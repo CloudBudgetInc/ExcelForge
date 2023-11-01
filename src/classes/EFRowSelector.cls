@@ -36,4 +36,10 @@ public with sharing class EFRowSelector {
 	public static List<EFRow__c> getAllEFRowsByTemplateIdServer(String tId) {
 		return [SELECT Id,Name,EFStyle__c,EFSheet__c FROM EFRow__c WHERE EFSheet__r.EFTemplate__c = :tId ORDER BY Name LIMIT 5000];
 	}
+
+	@AuraEnabled
+	public static List<EFRow__c> getEFRowsByFilterServer(String filter) {
+		if (filter == null) return null;
+		return Database.query('SELECT Id,Name,EFStyle__c,EFSheet__c FROM EFRow__c WHERE ' + filter);
+	}
 }

@@ -27,7 +27,7 @@
 						<!-- LEFT EXCEL HEADER -->
 
 						<template for:each={row.cells} for:item="cell">
-							<td key={cell.idx}>
+							<td key={cell.idx} data-rowidx={cell.rowIdx} data-colidx={cell.colIdx} ondblclick={showCellSetup}>
 								<div style={cell.style}>{cell.value}</div>
 							</td>
 						</template>
@@ -57,6 +57,9 @@
 	</template>
 	<template lwc:if={showColumnSetupDialog}>
 		<c-ef-column-setup record-id={selectedColumnId} sheet-id={openedSheet.Id}></c-ef-column-setup>
+	</template>
+	<template lwc:if={showCellSetupDialog}>
+		<c-ef-cell-setup cell-coordinate={selectedCellCoordinate} sheet-id={openedSheet.Id}></c-ef-cell-setup>
 	</template>
 
 

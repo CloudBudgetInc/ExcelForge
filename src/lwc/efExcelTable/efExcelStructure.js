@@ -82,12 +82,14 @@ const setExcelRows = (tableSheet, rows, cells) => {
 			r[row.exf__Index__c] = row.exf__Width__c;
 			return r;
 		}, {});
-		for (let xIdx = 0; xIdx < MIN_SHEET_HEIGHT; xIdx++) {
-			const tableRow = {numberHeader: {number: xIdx + 1}, cells: []};
-			for (let yId = 0; yId < MIN_SHEET_WIDTH; yId++) {
-				const cell = rowCellMatrix[xIdx + 1]?.[yId + 1];
+		for (let rowIdx = 0; rowIdx < MIN_SHEET_HEIGHT; rowIdx++) { // ROW is X, Column is Y
+			const tableRow = {numberHeader: {number: rowIdx + 1}, cells: []};
+			for (let colIdx = 0; colIdx < MIN_SHEET_WIDTH; colIdx++) {
+				const cell = rowCellMatrix[rowIdx + 1]?.[colIdx + 1];
 				const tableCell = {
-					idx: yId + 1,
+					rowIdx: rowIdx + 1,
+					colIdx: colIdx + 1,
+					cellId: cell ? cell.Id : undefined,
 					value: cell ? getCellValue(cell) : '',
 					style: getCSSStyle(cell?.exf__EFStyle__c)
 				};
@@ -128,6 +130,31 @@ const getCSSStyle = (styleId) => {
 	if (style.exf__FillColor__c) result += `background-color: ${style.exf__FillColor__c}; `;
 	if (style.exf__FontColor__c) result += `color: ${style.exf__FontColor__c}; `;
 	if (style.exf__FontSize__c) result += `font-size: ${style.exf__FontSize__c}px; `;
+	if (style.exf__FontUnderline__c) result += `text-decoration: underline; `;
+	if (style.exf__FontItalic__c) result += `font-style: italic; `;
+	if (style.exf__AlignmentHorizontal__c === 'center') result += `text-align: center; `;
+	if (style.exf__AlignmentHorizontal__c === 'right') result += `text-align: right; `;
+	if (style.exf__BorderTop__c) result = setBorderStyle('top', style.exf__BorderTop__c, result, style.exf__BorderColor__c);
+	if (style.exf__BorderBottom__c) result = setBorderStyle('bottom', style.exf__BorderBottom__c, result, style.exf__BorderColor__c);
+	if (style.exf__BorderRight__c) result = setBorderStyle('right', style.exf__BorderRight__c, result, style.exf__BorderColor__c);
+	if (style.exf__BorderLeft__c) result = setBorderStyle('left', style.exf__BorderLeft__c, result, style.exf__BorderColor__c);
+
+	return result;
+};
+
+const setBorderStyle = (position, value, result, color) => {
+	switch (value) {
+		case 'thin':
+			result += `border-${position}: 1px solid ${color}; `;
+			break;
+		case 'dotted':
+			result += `border-${position}: 1px dotted ${color}; `;
+			break;
+		case 'double':
+			result += `border-${position}: double ${color}; `;
+			break;
+		default:
+	}
 	return result;
 };
 

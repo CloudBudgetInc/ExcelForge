@@ -11,8 +11,9 @@
 }
 
 .exTable td {
-    overflow: hidden;
+    overflow: hidden !important;
     text-overflow: ellipsis;
+    border: 1px solid #cecece;
 }
 
 td div {
@@ -25,7 +26,6 @@ td div {
 
 .tabButton {
     --slds-c-button-radius-border: 0;
-
 }
 
 .selectedButton {

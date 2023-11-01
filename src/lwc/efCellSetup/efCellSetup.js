@@ -25,18 +25,24 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {api, LightningElement, track} from 'lwc';
 import {_confirm, _message, _parseServerError} from "c/efUtils";
-import getEFColumnByIdServer from '@salesforce/apex/EFColumnSelector.getEFColumnByIdServer';
-import saveColumnServer from '@salesforce/apex/EFPageController.saveColumnServer';
-import deleteColumnServer from '@salesforce/apex/EFPageController.deleteColumnServer';
+import getEFCellByIdServer from '@salesforce/apex/EFCellSelector.getEFCellByIdServer';
+import getEFCellByCoordinateServer from '@salesforce/apex/EFCellSelector.getEFCellByCoordinateServer';
+import saveCellServer from '@salesforce/apex/EFPageController.saveCellServer';
+import deleteCellServer from '@salesforce/apex/EFPageController.deleteCellServer';
 
 
-export default class EFColumnSetup extends LightningElement {
+export default class EFCellSetup extends LightningElement {
 
-	@api recordId;
+	@api recordId; // cell Id if exist		
+	@api cellCoordinate; // '5,7'
 	@api sheetId;
 	@track showSpinner = false;
-	@track column = {};
+	@track cell = {Name: 'Test'};
+	@track renderContent = false;
+	@track rowIdx;
+	@track colIdx;
 	@track reloadMainComponent = false;
+
 
 	async connectedCallback() {
 		this.doInit();
@@ -44,44 +50,72 @@ export default class EFColumnSetup extends LightningElement {
 
 	doInit = async () => {
 		try {
-			this.showSpinner = true;
-			if (this.recordId.length > 3) { // open existing record
-				await this.getColumn();
-			} else { // in case if new column needed
-				this.column = {Name: 'New', exf__Width__c: 120, exf__Index__c: this.recordId};
+			if (this.cellCoordinate) {
+				this.rowIdx = this.cellCoordinate.split(',')[0];
+				this.colIdx = this.cellCoordinate.split(',')[1];
 			}
-			if (this.sheetId) this.column.exf__EFSheet__c = this.sheetId;
+			this.renderContent = false;
+			this.showSpinner = true;
+			if (this.recordId) { // open existing record
+				await this.getCell();
+				this.rowIdx = this.cell.exf__EFRowIndex__c;
+				this.colIdx = this.cell.exf__Index__c;
+				this.sheetId = this.cell.exf__EFSheet__c;
+			} else { // in case if new column needed
+				await this.getCellByCoordinate();
+			}
+			if (!this.cell) {
+				this.cell = {Name: 'New'};
+			}
+			this.renderContent = true;
 			this.showSpinner = false;
 		} catch (e) {
-			_message('error', 'Column Setup Do Init Error: ' + e);
+			_message('error', 'Cell Setup Do Init Error: ' + e);
+			this.showSpinner = false;
 		}
 	};
 
-	getColumn = async () => this.column = await getEFColumnByIdServer({tId: this.recordId}).catch(e => _parseServerError('Get Column Error : ', e));
+	getCell = async () => this.cell = await getEFCellByIdServer({tId: this.recordId}).catch(e => _parseServerError('Get Cell Error : ', e));
+	getCellByCoordinate = async () => this.cell = await getEFCellByCoordinateServer({
+		rowIdx: this.rowIdx,
+		colIdx: this.colIdx,
+		sheetId: this.sheetId
+	}).catch(e => _parseServerError('Get Cell by Coordinate Error : ', e));
 
-	saveColumn = async () => {
+	/**
+	 * (EFCell__c cell, String sheetId, Integer rowIdx, Integer colIdx
+	 * @return {Promise<void>}
+	 */
+	saveCell = async () => {
+		this.renderContent = false;
 		this.showSpinner = true;
-		this.recordId = await saveColumnServer({column: this.column}).catch(e => _parseServerError('Saving Column Error : ', e));
-		await this.getColumn();
+		this.recordId = await saveCellServer({
+			cell: this.cell,
+			sheetId: this.sheetId,
+			rowIdx: this.rowIdx,
+			colIdx: this.colIdx
+		}).catch(e => _parseServerError('Saving Cell Error : ', e));
+		await this.getCell();
 		_message('success', 'Saved');
 		this.showSpinner = false;
+		this.renderContent = true;
 		this.reloadMainComponent = true;
 	};
 
-	deleteColumn = async () => {
-		const confirmed = await _confirm('Are you sure to delete the column?', 'Confirm', 'warning');
+	deleteCell = async () => {
+		const confirmed = await _confirm('Are you sure to delete the cell?', 'Confirm', 'warning');
 		if (!confirmed) return null;
 		this.showSpinner = true;
-		await deleteColumnServer({columnId: this.column.Id}).catch(e => _parseServerError('Delete Column Error : ', e));
+		await deleteCellServer({cellId: this.cell.Id}).catch(e => _parseServerError('Delete Cell Error : ', e));
 		_message('success', 'Deleted');
 		this.showSpinner = false;
-		this.closeColumnSetup();
 		this.reloadMainComponent = true;
+		this.closeCellSetup();
 	};
 
-	handleChanges = (event) => this.column[event.target.name] = event.target.value;
+	handleChanges = (event) => this.cell[event.target.name] = event.target.value;
 
-	closeColumnSetup = () => {
+	closeCellSetup = () => {
 		this.dispatchEvent(new CustomEvent('closeSetupDialog', {
 			bubbles: true,
 			composed: true,
