@@ -63,9 +63,11 @@
 			</div>
 
 			<div class="slds-modal__footer">
-				<div class="slds-float_left">
-					Cell: {cell.exf__CellCoordinate__c}
-				</div>
+				<template lwc:if={renderContent}>
+					<div class="slds-float_left">
+						Cell: {cell.exf__CellCoordinate__c}
+					</div>
+				</template>
 				<lightning-button-group class="slds-m-right__medium">
 					<lightning-button label="Delete" variant="destructive" onclick={deleteCell}></lightning-button>
 				</lightning-button-group>
