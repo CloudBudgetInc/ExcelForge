@@ -47,6 +47,7 @@ public with sharing class EFStyleSelector {
 						FontSize__c,
 						FontUnderline__c,
 						Description__c,
+						StyleCSS__c,
 						Id,
 						Name
 				FROM EFStyle__c
@@ -81,6 +82,7 @@ public with sharing class EFStyleSelector {
 						FontSize__c,
 						FontUnderline__c,
 						Description__c,
+						StyleCSS__c,
 						Id,
 						Name
 				FROM EFStyle__c

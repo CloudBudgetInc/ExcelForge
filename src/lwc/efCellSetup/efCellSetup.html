@@ -27,6 +27,7 @@
 						</lightning-layout-item>
 						<lightning-layout-item>
 							<lightning-input label="Value" value={cell.exf__Value__c} name="exf__Value__c"
+											 disabled={cell.exf__EFDataSet__c}
 											 onchange={handleChanges}></lightning-input>
 						</lightning-layout-item>
 						<lightning-layout-item>
@@ -38,6 +39,13 @@
 										onchange={handleChanges}>
 								</lightning-input-field>
 							</lightning-record-edit-form>
+
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<div class="slds-p-top_large">
+								<lightning-button label="Add Style" icon-name="utility:add"
+												  onclick={createNewStyle}></lightning-button>
+							</div>
 						</lightning-layout-item>
 					</lightning-layout>
 					<lightning-layout>
@@ -57,6 +65,9 @@
 											 onchange={handleChanges}></lightning-input>
 						</lightning-layout-item>
 					</lightning-layout>
+					<template lwc:if={cell.exf__EFStyle__c}>
+						<c-ef-style-setup record-id={cell.exf__EFStyle__c}></c-ef-style-setup>
+					</template>
 				</template>
 
 

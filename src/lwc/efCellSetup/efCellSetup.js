@@ -28,6 +28,7 @@ import {_confirm, _message, _parseServerError} from "c/efUtils";
 import getEFCellByIdServer from '@salesforce/apex/EFCellSelector.getEFCellByIdServer';
 import getEFCellByCoordinateServer from '@salesforce/apex/EFCellSelector.getEFCellByCoordinateServer';
 import saveCellServer from '@salesforce/apex/EFPageController.saveCellServer';
+import saveStyleServer from '@salesforce/apex/EFPageController.saveStyleServer';
 import deleteCellServer from '@salesforce/apex/EFPageController.deleteCellServer';
 
 
@@ -42,6 +43,7 @@ export default class EFCellSetup extends LightningElement {
 	@track rowIdx;
 	@track colIdx;
 	@track reloadMainComponent = false;
+	@track showStylePanel = false;
 
 
 	async connectedCallback() {
@@ -121,6 +123,12 @@ export default class EFCellSetup extends LightningElement {
 			composed: true,
 			detail: {reloadMainComponent: this.reloadMainComponent}
 		}));
+	};
+
+	createNewStyle = async () => {
+		this.cell.exf__EFStyle__c = await saveStyleServer({style: {Name: 'Custom'}}).catch(e => _parseServerError('Create New Style Error: ', e));
+		this.saveCell();
+		this.showStylePanel = true;
 	};
 
 }

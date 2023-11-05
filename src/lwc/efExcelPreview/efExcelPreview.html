@@ -5,6 +5,12 @@
 	<!-- SPINNER -->
 
 	<lightning-card title="EF Excel Preview">
+
+		<lightning-button label="Refresh" icon-name="utility:refresh" slot="actions"
+						  onclick={doInit}></lightning-button>
+		<lightning-button label="Download" icon-name="doctype:excel" slot="actions"
+						  onclick={downloadExcel}></lightning-button>
+
 		<template lwc:if={showTable}>
 			<div style="overflow: auto; width: 100%">
 				<c-ef-excel-table table-structure={tableStructure} s-objects-map={sObjectsMap}></c-ef-excel-table>

@@ -117,47 +117,10 @@ const getCellValue = (cell) => {
 	}
 };
 
-/**
- * TODO: Remove it to CSS classes
- * @param styleId
- * @return {string|undefined}
- */
 const getCSSStyle = (styleId) => {
 	const style = styleMap[styleId];
-	if (!styleId || !style) return undefined;
-	//{"AlignmentHorizontal__c":"left","AlignmentVertical__c":"bottom","FillPatern__c":"none","FontBold__c":true,"FontItalic__c":false,"FontSize__c":16,"FontUnderline__c":false,"Id":"a3J55000000jKWTEA2","Name":"Header"}
-	let result = 'height: 100%; width: 100%; ';
-	if (style.exf__FillColor__c) result += `background-color: ${style.exf__FillColor__c}; `;
-	if (style.exf__FontColor__c) result += `color: ${style.exf__FontColor__c}; `;
-	if (style.exf__FontSize__c) result += `font-size: ${style.exf__FontSize__c}px; `;
-	if (style.exf__FontUnderline__c) result += `text-decoration: underline; `;
-	if (style.exf__FontItalic__c) result += `font-style: italic; `;
-	if (style.exf__AlignmentHorizontal__c === 'center') result += `text-align: center; `;
-	if (style.exf__AlignmentHorizontal__c === 'right') result += `text-align: right; `;
-	if (style.exf__BorderTop__c) result = setBorderStyle('top', style.exf__BorderTop__c, result, style.exf__BorderColor__c);
-	if (style.exf__BorderBottom__c) result = setBorderStyle('bottom', style.exf__BorderBottom__c, result, style.exf__BorderColor__c);
-	if (style.exf__BorderRight__c) result = setBorderStyle('right', style.exf__BorderRight__c, result, style.exf__BorderColor__c);
-	if (style.exf__BorderLeft__c) result = setBorderStyle('left', style.exf__BorderLeft__c, result, style.exf__BorderColor__c);
-
-	return result;
+	return style ? style.exf__StyleCSS__c : undefined;
 };
-
-const setBorderStyle = (position, value, result, color) => {
-	switch (value) {
-		case 'thin':
-			result += `border-${position}: 1px solid ${color}; `;
-			break;
-		case 'dotted':
-			result += `border-${position}: 1px dotted ${color}; `;
-			break;
-		case 'double':
-			result += `border-${position}: double ${color}; `;
-			break;
-		default:
-	}
-	return result;
-};
-
 
 /**
  * Method returns object where key is row index value is object where key is cell index and value is cell

@@ -8,16 +8,17 @@
 
 		<template lwc:if={renderContent}>
 
-			<lightning-layout class="slds-m-around_medium"  horizontal-align="space">
+			<lightning-layout class="slds-m-around_medium">
 				<lightning-layout-item>
 					<lightning-layout class="slds-border_top">
 						<lightning-layout-item>
-							<lightning-input label="Name" value={style.Name} name="Name"
-											 onchange={handleChanges}></lightning-input>
+							<lightning-input label="Name" name="Name" onchange={handleChanges}
+											 value={style.Name}></lightning-input>
 						</lightning-layout-item>
 						<lightning-layout-item>
-							<lightning-input label="Description" value={style.exf__Description__c} name="exf__Description__c"
-											 onchange={handleChanges}></lightning-input>
+							<lightning-input label="Description" name="exf__Description__c"
+											 onchange={handleChanges}
+											 value={style.exf__Description__c}></lightning-input>
 						</lightning-layout-item>
 
 					</lightning-layout>
@@ -31,14 +32,14 @@
 								<lightning-input-field
 										field-name="exf__FillPattern__c"
 										name="exf__FillPattern__c"
-										value={style.exf__FillPattern__c}
-										onchange={handleChanges}>
+										onchange={handleChanges}
+										value={style.exf__FillPattern__c}>
 								</lightning-input-field>
 							</lightning-record-edit-form>
 						</lightning-layout-item>
 						<lightning-layout-item>
-							<lightning-input type="color" name="exf__FillColor__c" label="Fill Color"
-											 onchange={handleChanges}
+							<lightning-input label="Fill Color" name="exf__FillColor__c" onchange={handleChanges}
+											 type="color"
 											 value={style.exf__FillColor__c}></lightning-input>
 						</lightning-layout-item>
 					</lightning-layout>
@@ -53,8 +54,8 @@
 								<lightning-input-field
 										field-name="exf__AlignmentHorizontal__c"
 										name="exf__AlignmentHorizontal__c"
-										value={style.exf__EFStyle__c}
-										onchange={handleChanges}>
+										onchange={handleChanges}
+										value={style.exf__EFStyle__c}>
 								</lightning-input-field>
 							</lightning-record-edit-form>
 						</lightning-layout-item>
@@ -63,8 +64,8 @@
 								<lightning-input-field
 										field-name="exf__AlignmentVertical__c"
 										name="exf__AlignmentVertical__c"
-										value={style.exf__AlignmentVertical__c}
-										onchange={handleChanges}>
+										onchange={handleChanges}
+										value={style.exf__AlignmentVertical__c}>
 								</lightning-input-field>
 							</lightning-record-edit-form>
 						</lightning-layout-item>
@@ -73,7 +74,7 @@
 				</lightning-layout-item>
 			</lightning-layout>
 
-			<lightning-layout class="slds-m-around_medium" horizontal-align="space">
+			<lightning-layout class="slds-m-around_medium">
 
 				<lightning-layout-item>
 					<!-- Border -->
@@ -83,8 +84,8 @@
 								<lightning-input-field
 										field-name="exf__BorderTop__c"
 										name="exf__BorderTop__c"
-										value={style.exf__BorderTop__c}
-										onchange={handleChanges}>
+										onchange={handleChanges}
+										value={style.exf__BorderTop__c}>
 								</lightning-input-field>
 							</lightning-record-edit-form>
 						</lightning-layout-item>
@@ -93,8 +94,8 @@
 								<lightning-input-field
 										field-name="exf__BorderBottom__c"
 										name="exf__BorderBottom__c"
-										value={style.exf__BorderBottom__c}
-										onchange={handleChanges}>
+										onchange={handleChanges}
+										value={style.exf__BorderBottom__c}>
 								</lightning-input-field>
 							</lightning-record-edit-form>
 						</lightning-layout-item>
@@ -103,8 +104,8 @@
 								<lightning-input-field
 										field-name="exf__BorderLeft__c"
 										name="exf__BorderLeft__c"
-										value={style.exf__BorderLeft__c}
-										onchange={handleChanges}>
+										onchange={handleChanges}
+										value={style.exf__BorderLeft__c}>
 								</lightning-input-field>
 							</lightning-record-edit-form>
 						</lightning-layout-item>
@@ -113,14 +114,14 @@
 								<lightning-input-field
 										field-name="exf__BorderRight__c"
 										name="exf__BorderRight__c"
-										value={style.exf__BorderRight__c}
-										onchange={handleChanges}>
+										onchange={handleChanges}
+										value={style.exf__BorderRight__c}>
 								</lightning-input-field>
 							</lightning-record-edit-form>
 						</lightning-layout-item>
 						<lightning-layout-item>
-							<lightning-input type="color" name="exf__BorderColor__c" label="Border color"
-											 onchange={handleChanges}
+							<lightning-input label="Border color" name="exf__BorderColor__c" onchange={handleChanges}
+											 type="color"
 											 value={style.exf__BorderColor__c}></lightning-input>
 						</lightning-layout-item>
 					</lightning-layout>
@@ -131,41 +132,41 @@
 					<!-- Font -->
 					<lightning-layout class="slds-border_top">
 						<lightning-layout-item>
-							<lightning-input type="number" name="exf__FontSize__c" required value={style.exf__FontSize__c}
+							<lightning-input label="Font Size" max="40" min="5"
+											 name="exf__FontSize__c"
 											 onchange={handleChanges}
-											 label="Font Size" max="40" min="5" step="1.0"></lightning-input>
+											 required step="1.0" type="number" value={style.exf__FontSize__c}></lightning-input>
 						</lightning-layout-item>
 						<lightning-layout-item>
-							<lightning-input type="color" name="exf__FontColor__c" label="Font Color" onchange={handleChanges}
+							<lightning-input label="Font Color" name="exf__FontColor__c" onchange={handleChanges}
+											 type="color"
 											 value={style.exf__FontColor__c}></lightning-input>
 						</lightning-layout-item>
 						<lightning-layout-item>
 							<div class="slds-p-top_large">
-								<lightning-input type="toggle" label="Bold" name="exf__FontBold__c" onchange={handleCheckbox}
-												 checked={style.exf__FontBold__c}></lightning-input>
+								<lightning-input checked={style.exf__FontBold__c} label="Bold" name="exf__FontBold__c"
+												 onchange={handleCheckbox}
+												 type="toggle"></lightning-input>
 							</div>
 						</lightning-layout-item>
 						<lightning-layout-item>
 							<div class="slds-p-top_large">
-								<lightning-input type="toggle" label="Italic" name="exf__FontItalic__c"
+								<lightning-input checked={style.exf__FontItalic__c} label="Italic" name="exf__FontItalic__c"
 												 onchange={handleCheckbox}
-												 checked={style.exf__FontItalic__c}></lightning-input>
+												 type="toggle"></lightning-input>
 							</div>
 						</lightning-layout-item>
 						<lightning-layout-item>
 							<div class="slds-p-top_large">
-								<lightning-input type="toggle" label="Underline" name="exf__FontUnderline__c"
+								<lightning-input checked={style.exf__FontUnderline__c} label="Underline" name="exf__FontUnderline__c"
 												 onchange={handleCheckbox}
-												 checked={style.exf__FontUnderline__c}></lightning-input>
+												 type="toggle"></lightning-input>
 							</div>
 						</lightning-layout-item>
 						<!-- Font -->
 					</lightning-layout>
 				</lightning-layout-item>
 			</lightning-layout>
-
-
-
 
 
 		</template>
