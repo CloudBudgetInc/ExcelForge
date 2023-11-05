@@ -29,6 +29,7 @@ public with sharing class EFStyleSelector {
 
 	@AuraEnabled
 	public static EFStyle__c getEFStyleByIdServer(String tId) {
+		System.debug('tId= ' + tId);
 		return [
 				SELECT
 						AlignmentHorizontal__c,
@@ -39,12 +40,13 @@ public with sharing class EFStyleSelector {
 						BorderRight__c,
 						BorderTop__c,
 						FillColor__c,
-						FillPatern__c,
+						FillPattern__c,
 						FontBold__c,
 						FontColor__c,
 						FontItalic__c,
 						FontSize__c,
 						FontUnderline__c,
+						Description__c,
 						Id,
 						Name
 				FROM EFStyle__c
@@ -72,12 +74,13 @@ public with sharing class EFStyleSelector {
 						BorderRight__c,
 						BorderTop__c,
 						FillColor__c,
-						FillPatern__c,
+						FillPattern__c,
 						FontBold__c,
 						FontColor__c,
 						FontItalic__c,
 						FontSize__c,
 						FontUnderline__c,
+						Description__c,
 						Id,
 						Name
 				FROM EFStyle__c

@@ -82,4 +82,15 @@ public with sharing class EFPageController {
 		Database.delete(cellId);
 	}
 
+	@AuraEnabled
+	public static String saveStyleServer(EFStyle__c style) {
+		upsert style;
+		return style.Id;
+	}
+
+	@AuraEnabled
+	public static void deleteStyleServer(String styleId) {
+		Database.delete(styleId);
+	}
+
 }

@@ -1,0 +1,176 @@
+<template>
+
+	<!-- SPINNER -->
+	<c-ef-spinner show={showSpinner}></c-ef-spinner>
+	<!-- SPINNER -->
+
+	<lightning-card title="EF Style">
+
+		<template lwc:if={renderContent}>
+
+			<lightning-layout class="slds-m-around_medium"  horizontal-align="space">
+				<lightning-layout-item>
+					<lightning-layout class="slds-border_top">
+						<lightning-layout-item>
+							<lightning-input label="Name" value={style.Name} name="Name"
+											 onchange={handleChanges}></lightning-input>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<lightning-input label="Description" value={style.exf__Description__c} name="exf__Description__c"
+											 onchange={handleChanges}></lightning-input>
+						</lightning-layout-item>
+
+					</lightning-layout>
+				</lightning-layout-item>
+
+				<lightning-layout-item>
+					<!-- Fill -->
+					<lightning-layout class="slds-border_top">
+						<lightning-layout-item>
+							<lightning-record-edit-form object-api-name="exf__EFStyle__c">
+								<lightning-input-field
+										field-name="exf__FillPattern__c"
+										name="exf__FillPattern__c"
+										value={style.exf__FillPattern__c}
+										onchange={handleChanges}>
+								</lightning-input-field>
+							</lightning-record-edit-form>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<lightning-input type="color" name="exf__FillColor__c" label="Fill Color"
+											 onchange={handleChanges}
+											 value={style.exf__FillColor__c}></lightning-input>
+						</lightning-layout-item>
+					</lightning-layout>
+					<!-- Fill -->
+				</lightning-layout-item>
+
+				<lightning-layout-item>
+					<!-- Alignment -->
+					<lightning-layout class="slds-border_top">
+						<lightning-layout-item>
+							<lightning-record-edit-form object-api-name="exf__EFStyle__c">
+								<lightning-input-field
+										field-name="exf__AlignmentHorizontal__c"
+										name="exf__AlignmentHorizontal__c"
+										value={style.exf__EFStyle__c}
+										onchange={handleChanges}>
+								</lightning-input-field>
+							</lightning-record-edit-form>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<lightning-record-edit-form object-api-name="exf__EFStyle__c">
+								<lightning-input-field
+										field-name="exf__AlignmentVertical__c"
+										name="exf__AlignmentVertical__c"
+										value={style.exf__AlignmentVertical__c}
+										onchange={handleChanges}>
+								</lightning-input-field>
+							</lightning-record-edit-form>
+						</lightning-layout-item>
+					</lightning-layout>
+					<!-- Alignment -->
+				</lightning-layout-item>
+			</lightning-layout>
+
+			<lightning-layout class="slds-m-around_medium" horizontal-align="space">
+
+				<lightning-layout-item>
+					<!-- Border -->
+					<lightning-layout class="slds-border_top">
+						<lightning-layout-item>
+							<lightning-record-edit-form object-api-name="exf__EFStyle__c">
+								<lightning-input-field
+										field-name="exf__BorderTop__c"
+										name="exf__BorderTop__c"
+										value={style.exf__BorderTop__c}
+										onchange={handleChanges}>
+								</lightning-input-field>
+							</lightning-record-edit-form>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<lightning-record-edit-form object-api-name="exf__EFStyle__c">
+								<lightning-input-field
+										field-name="exf__BorderBottom__c"
+										name="exf__BorderBottom__c"
+										value={style.exf__BorderBottom__c}
+										onchange={handleChanges}>
+								</lightning-input-field>
+							</lightning-record-edit-form>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<lightning-record-edit-form object-api-name="exf__EFStyle__c">
+								<lightning-input-field
+										field-name="exf__BorderLeft__c"
+										name="exf__BorderLeft__c"
+										value={style.exf__BorderLeft__c}
+										onchange={handleChanges}>
+								</lightning-input-field>
+							</lightning-record-edit-form>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<lightning-record-edit-form object-api-name="exf__EFStyle__c">
+								<lightning-input-field
+										field-name="exf__BorderRight__c"
+										name="exf__BorderRight__c"
+										value={style.exf__BorderRight__c}
+										onchange={handleChanges}>
+								</lightning-input-field>
+							</lightning-record-edit-form>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<lightning-input type="color" name="exf__BorderColor__c" label="Border color"
+											 onchange={handleChanges}
+											 value={style.exf__BorderColor__c}></lightning-input>
+						</lightning-layout-item>
+					</lightning-layout>
+					<!-- Border -->
+				</lightning-layout-item>
+
+				<lightning-layout-item>
+					<!-- Font -->
+					<lightning-layout class="slds-border_top">
+						<lightning-layout-item>
+							<lightning-input type="number" name="exf__FontSize__c" required value={style.exf__FontSize__c}
+											 onchange={handleChanges}
+											 label="Font Size" max="40" min="5" step="1.0"></lightning-input>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<lightning-input type="color" name="exf__FontColor__c" label="Font Color" onchange={handleChanges}
+											 value={style.exf__FontColor__c}></lightning-input>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<div class="slds-p-top_large">
+								<lightning-input type="toggle" label="Bold" name="exf__FontBold__c" onchange={handleCheckbox}
+												 checked={style.exf__FontBold__c}></lightning-input>
+							</div>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<div class="slds-p-top_large">
+								<lightning-input type="toggle" label="Italic" name="exf__FontItalic__c"
+												 onchange={handleCheckbox}
+												 checked={style.exf__FontItalic__c}></lightning-input>
+							</div>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<div class="slds-p-top_large">
+								<lightning-input type="toggle" label="Underline" name="exf__FontUnderline__c"
+												 onchange={handleCheckbox}
+												 checked={style.exf__FontUnderline__c}></lightning-input>
+							</div>
+						</lightning-layout-item>
+						<!-- Font -->
+					</lightning-layout>
+				</lightning-layout-item>
+			</lightning-layout>
+
+
+
+
+
+		</template>
+
+	</lightning-card>
+
+
+</template>
