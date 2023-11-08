@@ -27,7 +27,8 @@
 						<!-- LEFT EXCEL HEADER -->
 
 						<template for:each={row.cells} for:item="cell">
-							<td key={cell.idx} data-rowidx={cell.rowIdx} data-colidx={cell.colIdx} ondblclick={showCellSetup}>
+							<td key={cell.idx} data-rowidx={cell.rowIdx} data-colidx={cell.colIdx}
+								ondblclick={showCellSetup}>
 								<div style={cell.style}>{cell.value}</div>
 							</td>
 						</template>
@@ -47,6 +48,9 @@
 				<lightning-button label='Add' icon-name="utility:add" class="tabButton"
 								  ondblclick={showSheetSetup} onclick={showSheetSetup}></lightning-button>
 			</lightning-button-group>
+			<div class="slds-float_right">
+				<c-ef-excel-download slot="actions" sheets={allSheets}></c-ef-excel-download>
+			</div>
 
 		</template>
 

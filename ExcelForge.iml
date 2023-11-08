@@ -2283,6 +2283,11 @@
                             <option name="name" value="efStyleSetup" />
                             <option name="selected" value="true" />
                           </MetadataEntry>
+                          <MetadataEntry>
+                            <option name="folder" value="true" />
+                            <option name="name" value="efExcelDownload" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
                         </list>
                       </option>
                       <option name="name" value="LightningComponentBundle" />
