@@ -69,6 +69,7 @@ export default class EFExcelDownload extends LightningElement {
 					}]
 				});
 				this.populateSheet(dataSheet, excelSheet);
+				this.setColumns(dataSheet.letterHeaders, excelSheet);
 			});
 
 			let data = await workbook.xlsx.writeBuffer();
@@ -102,6 +103,20 @@ export default class EFExcelDownload extends LightningElement {
 			})
 		} catch (e) {
 			_message('error', 'Populate Sheet Error : ' + e);
+		}
+	};
+
+	setColumns = (letterHeaders, excelSheet) => {
+		try {
+			if (!letterHeaders || letterHeaders.length === 0) return null;
+			letterHeaders.forEach((h, i) => {
+				if (i === 0) return null;
+				const column = excelSheet.getColumn(i);
+				column.width = h.s ? h.s?.replace(/\D/g, '') / 9 : 15;
+				console.log('column.width = ' + column.width);
+			});
+		} catch (e) {
+			_message('error', 'Set columns error : ' + e);
 		}
 	};
 

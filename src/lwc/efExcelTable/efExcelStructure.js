@@ -5,7 +5,7 @@ let styleMap = {}; // key is style Id, value is EFStyle object
 const sheets = [];
 const MIN_SHEET_WIDTH = 20;
 const MIN_SHEET_HEIGHT = 20;
-const defaultColumnWidth = 75;
+const DEFAULT_COLUMN_WIDTH = 75;
 
 const setContext = (context) => {
 	c = context;
@@ -47,7 +47,7 @@ const generateSheet = (sheet) => {
 		console.log('ALL Cells : ' + JSON.stringify(c.cells));
 		console.log('sheet.Id : ' + sheetId);
 		console.log('Cells : ' + JSON.stringify(cells));
-		setExcelTopHeader(tableSheet, columns);
+		setExcelTopHeaderAndTableWidth(tableSheet, columns);
 		setExcelRows(tableSheet, rows, cells);
 		return tableSheet;
 	} catch (e) {
@@ -55,7 +55,7 @@ const generateSheet = (sheet) => {
 	}
 };
 
-const setExcelTopHeader = (tableSheet, columns) => {
+const setExcelTopHeaderAndTableWidth = (tableSheet, columns) => {
 	try {
 		tableSheet.letterHeaders = [{s: `width: 40px`, letter: ''}];
 		const columnsMap = columns.reduce((r, col) => {
@@ -63,12 +63,15 @@ const setExcelTopHeader = (tableSheet, columns) => {
 			return r;
 		}, {});
 		console.log('COL MAP:' + JSON.stringify(columnsMap));
+		let totalTableWidth = 0;
 		generateExcelAlphabetArray(MIN_SHEET_WIDTH).forEach((letter, i) => {
 			const indicatedColumn = columnsMap[i + 1];
 			console.log('col #' + (i + 1) + ' width: ' + indicatedColumn?.exf__Width__c);
-			const width = indicatedColumn?.exf__Width__c ? indicatedColumn?.exf__Width__c : defaultColumnWidth;
+			const width = indicatedColumn?.exf__Width__c ? indicatedColumn?.exf__Width__c : DEFAULT_COLUMN_WIDTH;
+			totalTableWidth += +width;
 			tableSheet.letterHeaders.push({s: `width: ${width}px`, letter, Id: indicatedColumn?.Id, idx: i + 1});
 		});
+		tableSheet.tableStyle = `width: ${totalTableWidth}px;`;
 	} catch (e) {
 		_message('error', 'Set Excel Top Borders Error : ' + e);
 	}
