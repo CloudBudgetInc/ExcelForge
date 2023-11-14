@@ -112,33 +112,33 @@ export default class EFExcelDownload extends LightningElement {
 			letterHeaders.forEach((h, i) => {
 				if (i === 0) return null;
 				const column = excelSheet.getColumn(i);
-				column.width = h.s ? h.s?.replace(/\D/g, '') / 9 : 15;
-				console.log('column.width = ' + column.width);
+				column.width = h.s ? parseInt(h.s?.replace(/\D/g, '') / 9) : 15;
 			});
 		} catch (e) {
 			_message('error', 'Set columns error : ' + e);
 		}
 	};
 
+	/**
+	 * height: 100%;
+	 * width: 100%;
+	 * color: #BA4848;
+	 * background-color: #b5e853;
+	 * font-size: 16px;
+	 * text-decoration: underline;
+	 * font-style: italic;
+	 * font-weight: bold;
+	 * text-align:center;
+	 * border-top: 1px solid #CA2E79;
+	 * border-bottom: 1px solid #CA2E79;
+	 * border-right: 1px solid #CA2E79;
+	 * border-left: 1px solid #CA2E79;
+	 */
 	convertCSSToExcelStyle = (cssStyle) => {
 		const r = {};
 		if (!cssStyle || cssStyle.length === 0) return r;
 		console.log('cssStyle = ' + cssStyle);
-		/**
-		 * height: 100%;
-		 * width: 100%;
-		 * color: #BA4848;
-		 * background-color: #b5e853;
-		 * font-size: 16px;
-		 * text-decoration: underline;
-		 * font-style: italic;
-		 * font-weight: bold;
-		 * text-align:center;
-		 * border-top: 1px solid #CA2E79;
-		 * border-bottom: 1px solid #CA2E79;
-		 * border-right: 1px solid #CA2E79;
-		 * border-left: 1px solid #CA2E79;
-		 */
+
 		try {
 			const propertyMapping = cssStyle.split(';').reduce((m, property) => {
 				if (!property || !property.includes(':')) return m;
@@ -154,14 +154,20 @@ export default class EFExcelDownload extends LightningElement {
 				fgColor: {argb: backGroundColor.replace('#', '')}
 			};
 
+			const fontColor = propertyMapping['color'];
 			const fontSize = propertyMapping['font-size'];
 			const isBold = propertyMapping['font-weight'];
+			const fontStyle = propertyMapping['font-style'];
+			const textDecoration = propertyMapping['text-decoration'];
 			if (fontSize || isBold) {
 				r.font = {
-					size: fontSize ? fontSize : 12,
-					bold: isBold === true
+					size: fontSize ? parseInt(fontSize * 0.75) : 12
 				};
 			}
+			if (isBold) r.font.bold = true;
+			if (fontColor) r.font.color = {argb: fontColor.replace('#', '')};
+			if (fontStyle) r.font.italic = true;
+			if (textDecoration) r.font.underline = true;
 			console.log('RESULT: ' + JSON.stringify(r));
 			return r;
 		} catch (e) {

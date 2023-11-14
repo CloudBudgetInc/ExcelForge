@@ -16,6 +16,22 @@
     border: 1px solid #cecece;
 }
 
+.exTable tr:first-child td {
+    background: white;
+    position: sticky;
+    top: 0;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+    border: 1px solid #cecece;
+}
+
+/*.exTable th {
+    background: white;
+    position: sticky;
+    top: 0;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+    border: 1px solid #cecece;
+}*/
+
 td div {
     overflow: hidden;
 }

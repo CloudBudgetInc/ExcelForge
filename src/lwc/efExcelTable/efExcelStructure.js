@@ -4,7 +4,7 @@ let c;
 let styleMap = {}; // key is style Id, value is EFStyle object
 const sheets = [];
 const MIN_SHEET_WIDTH = 20;
-const MIN_SHEET_HEIGHT = 20;
+const MIN_SHEET_HEIGHT = 50;
 const DEFAULT_COLUMN_WIDTH = 75;
 
 const setContext = (context) => {
