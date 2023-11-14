@@ -37,6 +37,7 @@ public with sharing class EFDataSetSelector {
 						GroupingLevel2__c,
 						Id,
 						Name,
+						Type__c,
 						SourceType__c,
 						TotalonTop__c
 				FROM EFDataSet__c

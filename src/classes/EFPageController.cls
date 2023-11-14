@@ -93,4 +93,9 @@ public with sharing class EFPageController {
 		Database.delete(styleId);
 	}
 
+	@AuraEnabled
+	public static void deleteStyleServer(String styleId) {
+		Database.delete(styleId);
+	}
+
 }

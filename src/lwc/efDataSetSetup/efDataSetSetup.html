@@ -1,0 +1,50 @@
+<template>
+	<!-- SPINNER -->
+	<c-ef-spinner show={showSpinner}></c-ef-spinner>
+	<!-- SPINNER -->
+
+	<lightning-card title="Data Set Setup">
+		<lightning-button label="New" slot="actions"></lightning-button>
+
+		<template lwc:if={renderScreen}>
+
+			<lightning-layout class="slds-m-around_medium">
+				<lightning-layout-item>
+					<lightning-input value={dataSet.Name} onchange={handleChanges} label="Name"></lightning-input>
+				</lightning-layout-item>
+				<lightning-layout-item>
+					<lightning-record-edit-form object-api-name="exf__EFDataSet__c">
+						<lightning-input-field
+								field-name="exf__Type__c"
+								name="exf__Type__c"
+								value={dataSet.exf__Type__c}
+								onchange={handleChanges}>
+						</lightning-input-field>
+					</lightning-record-edit-form>
+				</lightning-layout-item>
+				<lightning-layout-item>
+
+				</lightning-layout-item>
+			</lightning-layout>
+
+			<!-- SINGLE -->
+			<template lwc:if={renderRules.isSingle}>
+				SINGLE
+			</template>
+			<!-- SINGLE -->
+			<!-- LIST -->
+			<template lwc:if={renderRules.isList}>
+				LIST
+			</template>
+			<!-- LIST -->
+			<!-- PIVOT -->
+			<template lwc:if={renderRules.isPivot}>
+				PIVOT
+			</template>
+			<!-- PIVOT -->
+
+		</template>
+
+	</lightning-card>
+
+</template>
