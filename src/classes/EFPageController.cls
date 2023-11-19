@@ -94,8 +94,8 @@ public with sharing class EFPageController {
 	}
 
 	@AuraEnabled
-	public static void deleteStyleServer(String styleId) {
-		Database.delete(styleId);
+	public static String saveDataSetServer(EFDataSet__c dataSet) {
+		upsert dataSet;
+		return dataSet.Id;
 	}
-
 }

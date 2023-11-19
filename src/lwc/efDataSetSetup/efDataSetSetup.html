@@ -4,15 +4,15 @@
 	<!-- SPINNER -->
 
 	<lightning-card title="Data Set Setup">
-		<lightning-button label="New" slot="actions"></lightning-button>
+		<lightning-button label="Save" slot="actions" variant="success" onclick={saveDataSet}></lightning-button>
 
 		<template lwc:if={renderScreen}>
 
-			<lightning-layout class="slds-m-around_medium">
-				<lightning-layout-item>
+			<lightning-layout class="slds-m-top_medium slds-m-left_medium slds-m-right_medium">
+				<lightning-layout-item size="2">
 					<lightning-input value={dataSet.Name} onchange={handleChanges} label="Name"></lightning-input>
 				</lightning-layout-item>
-				<lightning-layout-item>
+				<lightning-layout-item size="1">
 					<lightning-record-edit-form object-api-name="exf__EFDataSet__c">
 						<lightning-input-field
 								field-name="exf__Type__c"
@@ -22,10 +22,77 @@
 						</lightning-input-field>
 					</lightning-record-edit-form>
 				</lightning-layout-item>
-				<lightning-layout-item>
+				<lightning-layout-item size="2">
+					<lightning-layout>
+						<lightning-layout-item size="10">
+							<lightning-input value={dataSet.exf__SourceType__c} disabled
+											 label="Source Type"></lightning-input>
+						</lightning-layout-item>
+						<lightning-layout-item size="2">
+							<div class="slds-m-top_large">
+								<lightning-button-icon icon-name="utility:edit"
+													   onclick={renderSearchSource}></lightning-button-icon>
+							</div>
+						</lightning-layout-item>
+
+					</lightning-layout>
+
+					<template lwc:if={showEditSource}>
+						<lightning-layout>
+							<lightning-layout-item size="8">
+								<lightning-input value={searchSourceName} onchange={handleSearchString}
+												 label="Type a here"></lightning-input>
+							</lightning-layout-item>
+							<lightning-layout-item size="2">
+								<div class="slds-m-top_large">
+									<lightning-button-icon icon-name="utility:search"
+														   onclick={searchSource}></lightning-button-icon>
+								</div>
+							</lightning-layout-item>
+							<lightning-layout-item size="2">
+								<div class="slds-m-top_large">
+									<lightning-button-icon icon-name="utility:close"
+														   onclick={closeSearchSource}></lightning-button-icon>
+								</div>
+							</lightning-layout-item>
+						</lightning-layout>
+						<template for:each={searchingOptions} for:item="so">
+							<lightning-button key={so} title="Click to select" label={so}
+											  onclick={applySearchedName}></lightning-button>
+						</template>
+					</template>
 
 				</lightning-layout-item>
+				<lightning-layout-item size="7">
+					<lightning-layout>
+						<lightning-layout-item size="11">
+							<lightning-input value={dataSet.exf__Fields__c} onchange={handleChanges}
+											 label="Needed Filter"></lightning-input>
+						</lightning-layout-item>
+						<lightning-layout-item size="1">
+							<div class="slds-m-top_large">
+								<lightning-button-icon icon-name="utility:edit"
+													   onclick={renderListOfFields}></lightning-button-icon>
+							</div>
+						</lightning-layout-item>
+					</lightning-layout>
+					<template lwc:if={showListOfFields}>
+						<div style="height: 200px !important; overflow-y: scroll">
+							<lightning-button-icon icon-name="utility:close"
+												   onclick={closeListOfFields}></lightning-button-icon>
+							<template for:each={listOfAvailableFields} for:item="fieldSO">
+								<div key={fieldSO}>
+									<lightning-input type="checkbox" label={fieldSO.label} onchange={handleFieldChange}
+													 checked={fieldSO.checked}></lightning-input>
+								</div>
+							</template>
+						</div>
+					</template>
+				</lightning-layout-item>
 			</lightning-layout>
+			<lightning-input value={dataSet.exf__DataFilter__c} onchange={handleChanges}
+							 class="slds-m-left_medium slds-m-right_medium"
+							 label="Data Filter"></lightning-input>
 
 			<!-- SINGLE -->
 			<template lwc:if={renderRules.isSingle}>

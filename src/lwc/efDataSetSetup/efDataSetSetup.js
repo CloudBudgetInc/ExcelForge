@@ -24,8 +24,11 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 import {api, LightningElement, track} from 'lwc';
-import {_message, _parseServerError, _getCopy} from "c/efUtils";
+import {_getCopy, _message, _parseServerError} from "c/efUtils";
 import getEFDataSetByIdServer from '@salesforce/apex/EFDataSetSelector.getEFDataSetByIdServer';
+import searchSObjectsServer from '@salesforce/apex/EFUtils.searchSObjectsServer';
+import getFieldInfoServer from '@salesforce/apex/EFUtils.getFieldInfoServer';
+import saveDataSetServer from '@salesforce/apex/EFPageController.saveDataSetServer';
 
 
 export default class EFDataSetSetup extends LightningElement {
@@ -34,7 +37,8 @@ export default class EFDataSetSetup extends LightningElement {
 	@track showSpinner = false;
 	@track renderScreen = false;
 	@track dataSet = {};
-	@track renderRules = {isSingle: false, isList: false, isPivot: false};
+	@track renderRules = {isSingle: true, isList: false, isPivot: false};
+
 
 	async connectedCallback() {
 		this.doInit();
@@ -66,6 +70,70 @@ export default class EFDataSetSetup extends LightningElement {
 	};
 
 	getDataSet = async () => this.dataSet = await getEFDataSetByIdServer({tId: this.recordId}).catch(e => _parseServerError('Get Data Set Error : ', e));
+
+	saveDataSet = () => {
+		this.showSpinner = true;
+		this.showEditSource = false;
+		this.showListOfFields = false;
+		saveDataSetServer({dataSet: this.dataSet})
+			.then(dataSetId => {
+				this.recordId = dataSetId;
+				this.connectedCallback();
+			})
+			.catch(e => {
+				this.showSpinner = false;
+				_parseServerError('Save Data Set Error : ', e)
+			})
+	};
+
+	//// SEARCH SOURCE FUNCTION ////
+	@track showEditSource = false;
+	@track searchSourceName = '-';
+	@track searchingOptions = [];
+	renderSearchSource = () => this.showEditSource = true;
+	closeSearchSource = () => this.showEditSource = false;
+	handleSearchString = (event) => this.searchSourceName = event.target.value;
+	searchSource = async () => this.searchingOptions = await searchSObjectsServer({searchString: this.searchSourceName}).catch(e => _parseServerError('Search Source Error: ', e));
+	applySearchedName = (event) => {
+		this.dataSet.exf__SourceType__c = event.target.label;
+		this.dataSet.exf__DataSetField__c = null;
+		this.showEditSource = false;
+	};
+	//// SEARCH SOURCE FUNCTION ////
+
+	//// FIELDS PANEL ////
+	@track showListOfFields = false;
+	@track listOfAvailableFields = [];
+	renderListOfFields = () => {
+		this.showListOfFields = true;
+		this.getListOfAvailableFields();
+	};
+	closeListOfFields = () => this.showListOfFields = false;
+	getListOfAvailableFields = async () => {
+		const fieldsMap = await getFieldInfoServer({sObjectName: this.dataSet.exf__SourceType__c}).catch(e => _parseServerError('Get List of Fields Error: ', e));
+		if (fieldsMap) {
+			const checkedFields = this.dataSet.exf__Fields__c ? this.dataSet.exf__Fields__c.split(',') : [];
+			const labels = Object.keys(fieldsMap).sort();
+			this.listOfAvailableFields = labels.reduce((r, item) => {
+				const checked = checkedFields.find(checkedField => checkedField.toLowerCase().includes(item.toLowerCase()));
+				r.push({label: item, checked: !!checked});
+				return r;
+			}, []);
+		}
+	};
+	handleFieldChange = (event) => {
+		const checked = event.target.checked;
+		const field = event.target.label;
+		const so = this.listOfAvailableFields.find(so => so.label === field);
+		so.checked = checked;
+		const fieldsArray = this.listOfAvailableFields.reduce((r, item) => {
+			if (item.checked) r.push(item.label);
+			return r;
+		}, []);
+		fieldsArray.sort();
+		this.dataSet.exf__Fields__c = fieldsArray.join(',');
+	}
+	//// FIELDS PANEL ////
 
 
 }
