@@ -60,9 +60,6 @@ public with sharing class EFPageController {
 
 	@AuraEnabled
 	public static String saveCellServer(EFCell__c cell, String sheetId, Integer rowIdx, Integer colIdx) {
-		System.debug('ROW:' + rowIdx);
-		System.debug('COL:' + colIdx);
-		System.debug('SHEET:' + sheetId);
 		List<EFRow__c> rows = EFRowSelector.getEFRowsByFilterServer('EFSheet__c = \'' + sheetId + '\' AND Index__c = ' + rowIdx);
 		EFRow__c row;
 		if (rows.size() > 0) {

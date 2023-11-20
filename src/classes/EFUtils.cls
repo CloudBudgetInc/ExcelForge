@@ -27,14 +27,20 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
 public with sharing class EFUtils {
 
+	private static List<String> SKIP_FIELDS = new List<String>{
+			'isdeleted', 'lastmodifieddate', 'systemmodstamp', 'lastvieweddate', 'lastreferenceddate', 'lastmodifiedbyid'
+	};
+
 	@AuraEnabled
 	public static Map<String, String> getFieldInfoServer(String sObjectName) {
 		Map<String, String> fieldInfoMap = new Map<String, String>();
 		SObjectType sObjectType = Schema.getGlobalDescribe().get(sObjectName);
 		if (sObjectType != null) {
 			Map<String, SObjectField> fieldMap = sObjectType.getDescribe().fields.getMap();
-			for (String fieldName : fieldMap.keySet()) {
-				Schema.DisplayType fieldType = fieldMap.get(fieldName).getDescribe().getType();
+			for (String key : fieldMap.keySet()) {
+				if (SKIP_FIELDS.contains(key)) continue;
+				String fieldName = fieldMap.get(key).getDescribe().getName();
+				Schema.DisplayType fieldType = fieldMap.get(key).getDescribe().getType();
 				String fieldTypeString = convertDisplayTypeToString(fieldType);
 				fieldInfoMap.put(fieldName, fieldTypeString);
 			}
@@ -47,16 +53,23 @@ public with sharing class EFUtils {
 		List<String> matchingSObjects = new List<String>();
 		if (searchString == null || searchString.length() < 3) return matchingSObjects;
 		Map<String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
-		List<String> allSObjectNames = new List<String>(schemaMap.keySet());
-		for (String sObjectName : allSObjectNames) {
+		List<Schema.SObjectType> allSObjectNames = schemaMap.values();
+		for (Schema.SObjectType sObjectName : allSObjectNames) {
+			String name = sObjectName.getDescribe().getName();
 			if (matchingSObjects.size() >= 5) break;
-			String name = sObjectName.toLowerCase();
 			if (name.toLowerCase().contains('__share') || name.toLowerCase().contains('__changeevent')) continue;
-			if (name.contains(searchString.toLowerCase())) {
-				matchingSObjects.add(sObjectName);
-			}
+			if (name.toLowerCase().contains(searchString.toLowerCase())) matchingSObjects.add(name);
 		}
 		return matchingSObjects;
+	}
+
+	@AuraEnabled
+	public static Map<String, String> getSingleRecordsServer(String sObjectName, String searchString) {
+		Map<String, String> recordOptions = new Map<String, String>();
+		for (sObject rec : Database.query('SELECT Id, Name FROM ' + sObjectName + ' WHERE Name LIKE \'%' + searchString + '%\' ORDER BY Name LIMIT 20')) {
+			recordOptions.put((String) rec.get('Name'), rec.Id);
+		}
+		return recordOptions;
 	}
 
 	private static String convertDisplayTypeToString(Schema.DisplayType displayType) {

@@ -27,6 +27,7 @@ import {api, LightningElement, track} from 'lwc';
 import {_getCopy, _message, _parseServerError} from "c/efUtils";
 import getEFDataSetByIdServer from '@salesforce/apex/EFDataSetSelector.getEFDataSetByIdServer';
 import searchSObjectsServer from '@salesforce/apex/EFUtils.searchSObjectsServer';
+import getSingleRecordsServer from '@salesforce/apex/EFUtils.getSingleRecordsServer';
 import getFieldInfoServer from '@salesforce/apex/EFUtils.getFieldInfoServer';
 import saveDataSetServer from '@salesforce/apex/EFPageController.saveDataSetServer';
 
@@ -132,8 +133,32 @@ export default class EFDataSetSetup extends LightningElement {
 		}, []);
 		fieldsArray.sort();
 		this.dataSet.exf__Fields__c = fieldsArray.join(',');
-	}
+	};
 	//// FIELDS PANEL ////
+
+
+	//// SEARCH SINGLE RECORD FUNCTIONS ////
+	@track showEditSingleRecord = false;
+	@track searchSingleRecordName = '-';
+	@track singleRecordOptions = [];
+	renderEditSingleRecord = () => this.showEditSingleRecord = true;
+	closeEditSingleRecord = () => this.showEditSingleRecord = false;
+	handleSingleRecordSearchString = (event) => this.searchSingleRecordName = event.target.value;
+	searchSingleRecords = async () => {
+		const params = {sObjectName: this.dataSet.exf__SourceType__c, searchString: this.searchSingleRecordName};
+		this.singleRecordOptions = await getSingleRecordsServer(params)
+			.catch(e => _parseServerError('Search Single Record Error: ', e));
+		this.singleRecordOptions = Object.keys(this.singleRecordOptions).reduce((r, name) => {
+			const id = this.singleRecordOptions[name];
+			r.push({name, id});
+			return r;
+		}, []);
+	};
+	applySingleRecordName = (event) => {
+		this.dataSet.exf__SingleRecordId__c = event.target.value;
+		this.showEditSingleRecord = false;
+	};
+	//// SEARCH SINGLE RECORD FUNCTIONS ////
 
 
 }

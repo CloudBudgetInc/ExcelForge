@@ -39,6 +39,7 @@ public with sharing class EFDataSetSelector {
 						Name,
 						Type__c,
 						SourceType__c,
+						exf__SingleRecordId__c,
 						TotalonTop__c
 				FROM EFDataSet__c
 				WHERE Id = :tId

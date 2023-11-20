@@ -37,11 +37,17 @@ public with sharing class EFSObjectSelector {
 	@AuraEnabled
 	public static List<sObject> getSObjectsByEFDataSetIdServer(String dsId) {
 		EFDataSet__c dataSet = EFDataSetSelector.getEFDataSetByIdServer(dsId);
+		Boolean isSingleMode = dataSet.exf__Type__c == 'Single';
 		String s = 'SELECT ';
 		String fields = dataSet.Fields__c;
 		String f = ' FROM ' + dataSet.SourceType__c;
-		String w = dataSet.DataFilter__c == null ? '' : ' WHERE ' + dataSet.DataFilter__c;
-		String l = ' LIMIT 50000';
+		String w;
+		if (isSingleMode) {
+			w = ' WHERE Id = \'' + dataSet.exf__SingleRecordId__c + '\' ';
+		} else {
+			w = String.isEmpty(dataSet.DataFilter__c) ? '' : ' WHERE ' + dataSet.DataFilter__c.replace('{id}', dataSet.exf__SingleRecordId__c);
+		}
+		String l = isSingleMode ? ' LIMIT 1 ' : ' LIMIT 50000 ';
 		String request = s + fields + f + w + l;
 		System.debug('REQUEST:' + request);
 		return Database.query(request);
