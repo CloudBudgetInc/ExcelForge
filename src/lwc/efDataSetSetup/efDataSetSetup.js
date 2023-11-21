@@ -30,6 +30,7 @@ import searchSObjectsServer from '@salesforce/apex/EFUtils.searchSObjectsServer'
 import getSingleRecordsServer from '@salesforce/apex/EFUtils.getSingleRecordsServer';
 import getFieldInfoServer from '@salesforce/apex/EFUtils.getFieldInfoServer';
 import saveDataSetServer from '@salesforce/apex/EFPageController.saveDataSetServer';
+import getSObjectsByEFDataSetIdServer from '@salesforce/apex/EFSObjectSelector.getSObjectsByEFDataSetIdServer';
 
 
 export default class EFDataSetSetup extends LightningElement {
@@ -38,7 +39,7 @@ export default class EFDataSetSetup extends LightningElement {
 	@track showSpinner = false;
 	@track renderScreen = false;
 	@track dataSet = {};
-	@track renderRules = {isSingle: true, isList: false, isPivot: false};
+	@track renderRules = {isSingle: true, isPivot: false};
 
 
 	async connectedCallback() {
@@ -50,6 +51,7 @@ export default class EFDataSetSetup extends LightningElement {
 			this.showSpinner = true;
 			await this.getDataSet();
 			this.setRenderRule();
+			await this.getSObjects();
 			this.showSpinner = false;
 			this.renderScreen = true;
 		} catch (e) {
@@ -159,6 +161,25 @@ export default class EFDataSetSetup extends LightningElement {
 		this.showEditSingleRecord = false;
 	};
 	//// SEARCH SINGLE RECORD FUNCTIONS ////
+
+	//// GET SINGLE ACCOUNT ///
+	@track sObjects = [];
+	@track singleRecordExampleTable;
+	getSObjects = async () => {
+		this.singleRecordExampleTable = undefined;
+		this.sObjects = await getSObjectsByEFDataSetIdServer({dsId: this.recordId}).catch(e => console.error('GET SOBJECT ERROR: ' + e));
+		if (!this.sObjects || this.sObjects.length === 0) return null;
+		if (this.dataSet.exf__Type__c === 'Single') {
+			const record = this.sObjects[0];
+			this.singleRecordExampleTable = Object.keys(record).reduce((r, header) => {
+				let value = record[header];
+				if (value && value.length > 50) value = value.slice(0, 50) + '...';
+				r.push({header, value});
+				return r;
+			}, []);
+		}
+	}
+	//// GET SINGLE ACCOUNT ///
 
 
 }

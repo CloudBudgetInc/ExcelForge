@@ -1,3 +1,7 @@
 .error {
     background-color: indianred;
 }
+
+.smallSingleExampleText {
+    font-size: smaller;
+}

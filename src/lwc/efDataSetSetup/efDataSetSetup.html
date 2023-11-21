@@ -90,71 +90,89 @@
 					</template>
 				</lightning-layout-item>
 			</lightning-layout>
-			<lightning-input value={dataSet.exf__DataFilter__c} onchange={handleChanges}
-							 class="slds-m-left_medium slds-m-right_medium"
-							 label="Data Filter"></lightning-input>
+			<lightning-layout class="slds-p-left_medium">
+				<lightning-layout-item size="2">
+					<lightning-layout>
+						<lightning-layout-item size="10">
+							<lightning-input value={dataSet.exf__SingleRecordId__c} name='exf__SingleRecordId__c'
+											 disabled
+											 onchange={handleChanges}
+											 label="Single Record Id"></lightning-input>
+						</lightning-layout-item>
+						<lightning-layout-item size="2">
+							<div class="slds-m-top_large">
+								<lightning-button-icon icon-name="utility:edit"
+													   onclick={renderEditSingleRecord}></lightning-button-icon>
+							</div>
+						</lightning-layout-item>
+					</lightning-layout>
+
+					<template lwc:if={showEditSingleRecord}>
+						<div style="width: 300px;">
+							<lightning-layout>
+								<lightning-layout-item size="10">
+									<lightning-input value={searchSingleRecordName}
+													 onchange={handleSingleRecordSearchString}
+													 label="Type here"></lightning-input>
+								</lightning-layout-item>
+								<lightning-layout-item size="2">
+									<div class="slds-m-top_large">
+										<lightning-button-icon icon-name="utility:search"
+															   onclick={searchSingleRecords}></lightning-button-icon>
+									</div>
+								</lightning-layout-item>
+								<lightning-layout-item size="2">
+									<div class="slds-m-top_large">
+										<lightning-button-icon icon-name="utility:close"
+															   onclick={closeEditSingleRecord}></lightning-button-icon>
+									</div>
+								</lightning-layout-item>
+							</lightning-layout>
+							<template for:each={singleRecordOptions} for:item="so">
+								<lightning-button key={so} title="Click to select" label={so.name} value={so.id}
+												  onclick={applySingleRecordName}></lightning-button>
+							</template>
+						</div>
+					</template>
+
+				</lightning-layout-item>
+				<lightning-layout-item size="10">
+					<lightning-input value={dataSet.exf__DataFilter__c} onchange={handleChanges}
+									 class="slds-m-left_medium slds-m-right_medium"
+									 label="Data Filter"></lightning-input>
+				</lightning-layout-item>
+			</lightning-layout>
+
 
 			<!-- SINGLE -->
 			<template lwc:if={renderRules.isSingle}>
 				<lightning-layout class="slds-p-around_medium">
-					<lightning-layout-item>
-						<lightning-layout size="2">
-							<lightning-layout-item size="10">
-								<lightning-input value={dataSet.exf__SingleRecordId__c} name='exf__SingleRecordId__c'
-												 disabled
-												 onchange={handleChanges}
-												 label="Single Record Id"></lightning-input>
-							</lightning-layout-item>
-							<lightning-layout-item size="2">
-								<div class="slds-m-top_large">
-									<lightning-button-icon icon-name="utility:edit"
-														   onclick={renderEditSingleRecord}></lightning-button-icon>
-								</div>
-							</lightning-layout-item>
-						</lightning-layout>
-
-						<template lwc:if={showEditSingleRecord}>
-							<div style="width: 400px;">
-								<lightning-layout>
-									<lightning-layout-item size="10">
-										<lightning-input value={searchSingleRecordName}
-														 onchange={handleSingleRecordSearchString}
-														 label="Type here"></lightning-input>
-									</lightning-layout-item>
-									<lightning-layout-item size="2">
-										<div class="slds-m-top_large">
-											<lightning-button-icon icon-name="utility:search"
-																   onclick={searchSingleRecords}></lightning-button-icon>
-										</div>
-									</lightning-layout-item>
-									<lightning-layout-item size="2">
-										<div class="slds-m-top_large">
-											<lightning-button-icon icon-name="utility:close"
-																   onclick={closeEditSingleRecord}></lightning-button-icon>
-										</div>
-									</lightning-layout-item>
-								</lightning-layout>
-								<template for:each={singleRecordOptions} for:item="so">
-									<lightning-button key={so} title="Click to select" label={so.name} value={so.id}
-													  onclick={applySingleRecordName}></lightning-button>
+					<template lwc:if={singleRecordExampleTable}>
+						<table>
+							<tr>
+								<template for:each={singleRecordExampleTable} for:item='prop'>
+									<th class="smallSingleExampleText" key={prop}>{prop.header}</th>
 								</template>
-							</div>
-						</template>
+							</tr>
+							<tr>
+								<template for:each={singleRecordExampleTable} for:item='prop'>
+									<td class="smallSingleExampleText" key={prop}>{prop.value}</td>
+								</template>
+							</tr>
+						</table>
 
-					</lightning-layout-item>
-
-
+					</template>
 				</lightning-layout>
 			</template>
 			<!-- SINGLE -->
-			<!-- LIST -->
-			<template lwc:if={renderRules.isList}>
-				LIST
-			</template>
-			<!-- LIST -->
+
 			<!-- PIVOT -->
 			<template lwc:if={renderRules.isPivot}>
-				PIVOT
+				<lightning-layout class="slds-p-around_medium">
+					<lightning-layout-item>
+						<div>Table Example</div>
+					</lightning-layout-item>
+				</lightning-layout>
 			</template>
 			<!-- PIVOT -->
 
