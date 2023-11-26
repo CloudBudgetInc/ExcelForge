@@ -5,3 +5,17 @@
 .smallSingleExampleText {
     font-size: smaller;
 }
+
+.pillsStyle {
+    display: inline-block;
+    border-radius: 5px;
+    border: 1px solid gray;
+    padding: 4px;
+}
+
+.boxForFieldsStyle {
+    min-width: 100px;
+    min-height: 60px;
+}
+
+

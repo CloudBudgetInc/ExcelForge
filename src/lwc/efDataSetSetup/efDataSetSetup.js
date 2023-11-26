@@ -31,6 +31,14 @@ import getSingleRecordsServer from '@salesforce/apex/EFUtils.getSingleRecordsSer
 import getFieldInfoServer from '@salesforce/apex/EFUtils.getFieldInfoServer';
 import saveDataSetServer from '@salesforce/apex/EFPageController.saveDataSetServer';
 import getSObjectsByEFDataSetIdServer from '@salesforce/apex/EFSObjectSelector.getSObjectsByEFDataSetIdServer';
+import {
+	dragFieldOver,
+	dragFieldStart,
+	getPivotSetupFields,
+	setContext,
+	backFieldToStart,
+	dropFieldToArray
+} from "./efDataSetSetupPivotConfiguration";
 
 
 export default class EFDataSetSetup extends LightningElement {
@@ -40,6 +48,12 @@ export default class EFDataSetSetup extends LightningElement {
 	@track renderScreen = false;
 	@track dataSet = {};
 	@track renderRules = {isSingle: true, isPivot: false};
+	@track sObjects = [];
+	////// PIVOT TABLE /////
+	@track sObjectFields = [];
+	@track sObjectRowFields = [];
+
+	////// PIVOT TABLE /////
 
 
 	async connectedCallback() {
@@ -52,6 +66,10 @@ export default class EFDataSetSetup extends LightningElement {
 			await this.getDataSet();
 			this.setRenderRule();
 			await this.getSObjects();
+			if (this.dataSet.exf__Type__c === 'Pivot') {
+				setContext(this);
+				getPivotSetupFields(this);
+			}
 			this.showSpinner = false;
 			this.renderScreen = true;
 		} catch (e) {
@@ -62,7 +80,6 @@ export default class EFDataSetSetup extends LightningElement {
 
 	setRenderRule = () => {
 		this.renderRules.isSingle = this.dataSet.exf__Type__c === 'Single';
-		this.renderRules.isList = this.dataSet.exf__Type__c === 'List';
 		this.renderRules.isPivot = this.dataSet.exf__Type__c === 'Pivot';
 		this.renderRules = _getCopy(this.renderRules);
 	};
@@ -78,6 +95,7 @@ export default class EFDataSetSetup extends LightningElement {
 		this.showSpinner = true;
 		this.showEditSource = false;
 		this.showListOfFields = false;
+		if (this.dataSet.exf__PivotConfiguration__c) this.dataSet.exf__PivotConfiguration__c = JSON.stringify(this.dataSet.exf__PivotConfiguration__c);
 		saveDataSetServer({dataSet: this.dataSet})
 			.then(dataSetId => {
 				this.recordId = dataSetId;
@@ -138,7 +156,6 @@ export default class EFDataSetSetup extends LightningElement {
 	};
 	//// FIELDS PANEL ////
 
-
 	//// SEARCH SINGLE RECORD FUNCTIONS ////
 	@track showEditSingleRecord = false;
 	@track searchSingleRecordName = '-';
@@ -162,8 +179,7 @@ export default class EFDataSetSetup extends LightningElement {
 	};
 	//// SEARCH SINGLE RECORD FUNCTIONS ////
 
-	//// GET SINGLE ACCOUNT ///
-	@track sObjects = [];
+	//// GET RECORDS ///
 	@track singleRecordExampleTable;
 	getSObjects = async () => {
 		this.singleRecordExampleTable = undefined;
@@ -178,8 +194,18 @@ export default class EFDataSetSetup extends LightningElement {
 				return r;
 			}, []);
 		}
-	}
-	//// GET SINGLE ACCOUNT ///
+	};
+	//// GET RECORDS ///
+
+	///// PIVOT CONFIGURATION /////
+	dragStart = (event) => dragFieldStart(event);
+	dragOver = (event) => dragFieldOver(event);
+	dropToRows = (event) => dropFieldToArray(event, 'rows');
+	dropToColumns = (event) => dropFieldToArray(event, 'columns');
+	dropToValues = (event) => dropFieldToArray(event, 'values');
+	removeField = (event) => backFieldToStart(event.target.label);
+
+	///// PIVOT CONFIGURATION /////
 
 
 }

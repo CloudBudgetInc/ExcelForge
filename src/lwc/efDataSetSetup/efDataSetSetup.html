@@ -170,9 +170,47 @@
 			<template lwc:if={renderRules.isPivot}>
 				<lightning-layout class="slds-p-around_medium">
 					<lightning-layout-item>
-						<div>Table Example</div>
+						Fields
+						<div class="slds-box">
+							<template for:each={sObjectFields} for:item="field">
+								<div key={field} ondragstart={dragStart} draggable="true"
+									 class="draggableLine pillsStyle">
+									{field}
+								</div>
+							</template>
+						</div>
 					</lightning-layout-item>
 				</lightning-layout>
+				<lightning-layout class="slds-p-left_medium">
+					<lightning-layout-item>
+						Rows
+						<div class="slds-box boxForFieldsStyle" ondrop={dropToRows}
+							 ondragover={dragOver}>
+							<template for:each={dataSet.exf__PivotConfiguration__c.rows} for:item="field">
+								<lightning-pill key={field} label={field} onremove={removeField}></lightning-pill>
+							</template>
+						</div>
+					</lightning-layout-item>
+					<lightning-layout-item>
+						Columns
+						<div class="slds-box boxForFieldsStyle" ondrop={dropToColumns}
+							 ondragover={dragOver}>
+							<template for:each={dataSet.exf__PivotConfiguration__c.columns} for:item="field">
+								<lightning-pill key={field} label={field} onremove={removeField}></lightning-pill>
+							</template>
+						</div>
+					</lightning-layout-item>
+					<lightning-layout-item>
+						Values
+						<div class="slds-box boxForFieldsStyle" ondrop={dropToValues}
+							 ondragover={dragOver}>
+							<template for:each={dataSet.exf__PivotConfiguration__c.values} for:item="field">
+								<lightning-pill key={field} label={field} onremove={removeField}></lightning-pill>
+							</template>
+						</div>
+					</lightning-layout-item>
+				</lightning-layout>
+				<div>Table Example</div>
 			</template>
 			<!-- PIVOT -->
 
