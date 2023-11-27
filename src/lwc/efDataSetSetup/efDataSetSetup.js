@@ -32,12 +32,12 @@ import getFieldInfoServer from '@salesforce/apex/EFUtils.getFieldInfoServer';
 import saveDataSetServer from '@salesforce/apex/EFPageController.saveDataSetServer';
 import getSObjectsByEFDataSetIdServer from '@salesforce/apex/EFSObjectSelector.getSObjectsByEFDataSetIdServer';
 import {
+	backFieldToStart,
 	dragFieldOver,
 	dragFieldStart,
+	dropFieldToArray,
 	getPivotSetupFields,
-	setContext,
-	backFieldToStart,
-	dropFieldToArray
+	setContext
 } from "./efDataSetSetupPivotConfiguration";
 
 
@@ -184,6 +184,7 @@ export default class EFDataSetSetup extends LightningElement {
 	getSObjects = async () => {
 		this.singleRecordExampleTable = undefined;
 		this.sObjects = await getSObjectsByEFDataSetIdServer({dsId: this.recordId}).catch(e => console.error('GET SOBJECT ERROR: ' + e));
+		this.sObjects.forEach(o => console.log(JSON.stringify(o)));
 		if (!this.sObjects || this.sObjects.length === 0) return null;
 		if (this.dataSet.exf__Type__c === 'Single') {
 			const record = this.sObjects[0];

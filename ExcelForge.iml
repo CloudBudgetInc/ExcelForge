@@ -2301,6 +2301,10 @@
                             <option name="name" value="efDataSetSetup/efDataSetSetupPivotConfiguration.js" />
                             <option name="selected" value="true" />
                           </MetadataEntry>
+                          <MetadataEntry>
+                            <option name="name" value="efDataSetSetup/efDataSetSetupPivotTable.js" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
                         </list>
                       </option>
                       <option name="name" value="LightningComponentBundle" />

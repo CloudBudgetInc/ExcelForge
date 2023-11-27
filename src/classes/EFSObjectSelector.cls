@@ -47,8 +47,19 @@ public with sharing class EFSObjectSelector {
 		} else {
 			w = String.isEmpty(dataSet.DataFilter__c) ? '' : ' WHERE ' + dataSet.DataFilter__c.replace('{id}', dataSet.exf__SingleRecordId__c);
 		}
+		String ob = '';
+		if (dataSet.exf__PivotConfiguration__c != null) {
+			try {
+				Map<String, Object> jsonMap = (Map<String, Object>) JSON.deserializeUntyped(dataSet.exf__PivotConfiguration__c);
+				System.debug(jsonMap.get('rows'));
+				List<Object> rowsList = (List<Object>) jsonMap.get('rows');
+				ob = ' ORDER BY ' + String.join(rowsList, ',') + ' ';
+			} catch (Exception e) {
+				System.debug('ERROR: ' + e);
+			}
+		}
 		String l = isSingleMode ? ' LIMIT 1 ' : ' LIMIT 50000 ';
-		String request = s + fields + f + w + l;
+		String request = s + fields + f + w + ob + l;
 		System.debug('REQUEST:' + request);
 		return Database.query(request);
 	}
