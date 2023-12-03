@@ -24,74 +24,120 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+
 //import {_getCopy, _message, _parseServerError} from "c/efUtils";
+import {_getCopy, _message} from "c/efUtils";
 
 let context;
+let rows;
+let columns;
+let values;
 
-const setContext = (_this) => context = _this;
 
-const renderTable = () => {
-	const dataArray = context.sObjects;
-	const pivotConfiguration = context.dataSet.exf__PivotConfiguration__c;
-	if (!dataArray || !pivotConfiguration) return null;
+const setTableContext = (_this) => context = _this;
 
+const renderPivotExampleTable = () => {
+	try {
+		const dataArray = context.sObjects;
+		const pivotConfiguration = context.dataSet.exf__PivotConfiguration__c;
+		if (!dataArray || !pivotConfiguration) return null;
+		rows = pivotConfiguration.rows;
+		columns = pivotConfiguration.columns;
+		values = pivotConfiguration.values;
+		const gropedData = groupData(dataArray);
+		context.reportLines = generateReportLines(gropedData);
+	} catch (e) {
+		_message('error', 'Render Pivot Table Error ' + e);
+	}
 };
-
-const groupData = (rows, columns, dataArray) => {
-	const lastLvl = rows.length; // 3
-
-	const firstF = rows[0];
-	const mainGroup = getNewGroup();
-
-	dataArray.forEach(line => {
-		fillGroups(line, mainGroup, 0)
-	});
-
-	const fillGroups = (line, group, lvl) => {
-		if (lvl === lastLvl) {
-			group.lines.push(line);
-		} else {
-			const key = getRecordKey(rows.slice(0, lvl + 1), line);
-			let childGroup = group.groups.find(gr => gr.key === key);
-			if (!childGroup) {
-				childGroup = getNewGroup();
-				childGroup.key = key;
-				group.groups.push(childGroup);
-			}
-			fillGroups(line, childGroup, lvl + 1);
-		}
-	};
-
-
-};
-
-const getRecordKey = (rows, record) => rows.map(f => record[f]).join('');
-const getNewGroup = () => Object.assign({}, group);
-const getNewLine = () => Object.assign({}, line);
 
 const group = {
 	key: '',
+	titles: [],
+	lvl: 0,
 	groups: [],
-	lines: [],
-	totalLine: getNewLine()
+	dataLines: [],
+	reportLines: []
+};
+const getRecordKey = (rows, record) => rows.map(f => record[f]).join('');
+const getNewGroup = () => _getCopy(group);
+
+const groupData = (dataArray) => {
+	const lastLvl = rows.length; // 3
+	const mainGroup = getNewGroup();
+
+	const fillGroups = (dataLine, group, lvl) => {
+		try {
+			if (lvl === lastLvl) {
+				group.dataLines.push(dataLine);
+			} else {
+				const key = getRecordKey(rows.slice(0, lvl + 1), dataLine);
+				let childGroup = group.groups.find(gr => gr.key === key);
+				if (!childGroup) {
+					childGroup = getNewGroup();
+					childGroup.key = key;
+					childGroup.lvl = lvl;
+					childGroup.titles = [...group.titles, dataLine[rows[lvl]]];
+					group.groups.push(childGroup);
+				}
+				fillGroups(dataLine, childGroup, lvl + 1);
+			}
+		} catch (e) {
+			_message('error', 'Groups Error');
+		}
+	};
+
+	dataArray.forEach(dataLine => {
+		fillGroups(dataLine, mainGroup, 0)
+	});
+	console.log(JSON.stringify(mainGroup));
+	return mainGroup;
 };
 
-const line = {
-	k1: null, // key 1
-	k2: null,
-	k3: null,
-	k4: null,
-	k5: null,
-	c1: null, // column 1 value
-	c2: null,
-	c3: null,
-	c4: null,
-	c5: null,
-	c6: null,
-	c7: null
+const reportLine = {
+	titles: [],
+	values: []
+};
+
+const getNewReportLine = (titles, dl) => {
+	const newRL = _getCopy(reportLine);
+	newRL.titles = titles;
+	if (dl) {
+		values.forEach(valField => {
+			let val = dl[valField];
+			if (!val) val = 0;
+			newRL.values.push(val);
+		});
+	}
+	return newRL;
+};
+
+const generateReportLines = (gropedData) => {
+	const reportLines = [];
+	const processGroup = (group) => {
+		try {
+			const groupTotalReportLine = getNewReportLine(group.titles);
+			if (group.groups.length > 0) {
+				group.groups.forEach(childGroup => {
+					processGroup(childGroup);
+				});
+				reportLines.push(groupTotalReportLine);
+			} else {
+				group.dataLines.forEach(dl => {
+					const simpleReportLine = getNewReportLine(group.titles, dl);
+					reportLines.push(simpleReportLine);
+				});
+			}
+		} catch (e) {
+			_message('error', 'Generate Report Lines Error : ' + e);
+		}
+	};
+	processGroup(gropedData);
+	console.log('ReportLines : ' + JSON.stringify(reportLines));
+	return reportLines;
 };
 
 
-export {setContext}
+export {setTableContext, renderPivotExampleTable}
 
 

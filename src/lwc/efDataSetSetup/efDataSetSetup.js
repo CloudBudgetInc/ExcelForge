@@ -39,6 +39,7 @@ import {
 	getPivotSetupFields,
 	setContext
 } from "./efDataSetSetupPivotConfiguration";
+import {renderPivotExampleTable, setTableContext} from "./efDataSetSetupPivotTable";
 
 
 export default class EFDataSetSetup extends LightningElement {
@@ -52,7 +53,7 @@ export default class EFDataSetSetup extends LightningElement {
 	////// PIVOT TABLE /////
 	@track sObjectFields = [];
 	@track sObjectRowFields = [];
-
+	@track reportLines = [];
 	////// PIVOT TABLE /////
 
 
@@ -69,6 +70,8 @@ export default class EFDataSetSetup extends LightningElement {
 			if (this.dataSet.exf__Type__c === 'Pivot') {
 				setContext(this);
 				getPivotSetupFields(this);
+				setTableContext(this);
+				renderPivotExampleTable();
 			}
 			this.showSpinner = false;
 			this.renderScreen = true;

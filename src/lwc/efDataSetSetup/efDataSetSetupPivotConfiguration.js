@@ -50,6 +50,7 @@ const getPivotSetupFields = () => {
 	}
 };
 
+
 const backFieldToStart = (field) => {
 	['rows', 'columns', 'values'].forEach(type => context.dataSet.exf__PivotConfiguration__c[type] = context.dataSet.exf__PivotConfiguration__c[type].filter(f => f !== field));
 	context.sObjectFields.push(field);
