@@ -29,6 +29,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 import {_getCopy, _message} from "c/efUtils";
 
 let context;
+let headers;
 let rows;
 let columns;
 let values;
@@ -44,6 +45,7 @@ const renderPivotExampleTable = () => {
 		rows = pivotConfiguration.rows;
 		columns = pivotConfiguration.columns;
 		values = pivotConfiguration.values;
+		getExampleTableHeader();
 		const gropedData = groupData(dataArray);
 		context.reportLines = generateReportLines(gropedData);
 	} catch (e) {
@@ -57,10 +59,15 @@ const group = {
 	lvl: 0,
 	groups: [],
 	dataLines: [],
-	reportLines: []
+	reportLines: [],
+	groupTotalReportLine: {}
 };
 const getRecordKey = (rows, record) => rows.map(f => record[f]).join('');
 const getNewGroup = () => _getCopy(group);
+
+const getExampleTableHeader = () => {
+	context.headers = [...rows, ...values];
+};
 
 const groupData = (dataArray) => {
 	const lastLvl = rows.length; // 3
@@ -90,7 +97,7 @@ const groupData = (dataArray) => {
 	dataArray.forEach(dataLine => {
 		fillGroups(dataLine, mainGroup, 0)
 	});
-	console.log(JSON.stringify(mainGroup));
+	//console.log(JSON.stringify(mainGroup));
 	return mainGroup;
 };
 
@@ -111,29 +118,55 @@ const getNewReportLine = (titles, dl) => {
 	}
 	return newRL;
 };
+const sumValues = (baseValues, newValues) => {
+	for (let i = 0; i < newValues.length; i++) {
+		let baseValue = baseValues[i];
+		if (!baseValue) baseValue = 0;
+		const newValue = newValues[i];
+		baseValues[i] = +baseValue + +newValue;
+	}
+	return baseValues;
+};
 
 const generateReportLines = (gropedData) => {
 	const reportLines = [];
-	const processGroup = (group) => {
+	const populateListOfReportLinesAndReturnTotalValues = (group, lvl) => {
 		try {
-			const groupTotalReportLine = getNewReportLine(group.titles);
+			let totalValues = [];
+			group.groupTotalReportLine = getNewReportLine(group.titles);
+			group.groupTotalReportLine.styleClass = `lvl${lvl}`;
+			group.groupTotalReportLine.values = totalValues;
 			if (group.groups.length > 0) {
 				group.groups.forEach(childGroup => {
-					processGroup(childGroup);
+					let childTotalValues = populateListOfReportLinesAndReturnTotalValues(childGroup, lvl + 1);
+					totalValues = sumValues(totalValues, childTotalValues);
 				});
-				reportLines.push(groupTotalReportLine);
+				reportLines.push(group.groupTotalReportLine);
 			} else {
 				group.dataLines.forEach(dl => {
-					const simpleReportLine = getNewReportLine(group.titles, dl);
+					const simpleReportLine = getNewReportLine(group.titles, dl); // dl - data line
+					totalValues = sumValues(totalValues, simpleReportLine.values);
 					reportLines.push(simpleReportLine);
 				});
 			}
+			return totalValues;
 		} catch (e) {
 			_message('error', 'Generate Report Lines Error : ' + e);
 		}
 	};
-	processGroup(gropedData);
-	console.log('ReportLines : ' + JSON.stringify(reportLines));
+	populateListOfReportLinesAndReturnTotalValues(gropedData, 0);
+	reportLines.forEach(rl => {
+		if (!rl.styleClass) return null; // skip simple lines
+		if (rl.titles.length === 0) {
+			rl.titles = ['Global Total'];
+		} else {
+			rl.titles[rl.titles.length - 1] = 'Total ' + rl.titles[rl.titles.length - 1];
+		}
+		const diff = rows.length - rl.titles.length;
+		//console.log('rl.titles DIF: ' + JSON.stringify(rl.titles) + ' - ' + diff);
+		rl.titles = rl.titles.concat(Array(diff).fill('-'));
+	});
+	//console.log('ReportLines : ' + JSON.stringify(reportLines));
 	return reportLines;
 };
 

@@ -53,6 +53,7 @@ export default class EFDataSetSetup extends LightningElement {
 	////// PIVOT TABLE /////
 	@track sObjectFields = [];
 	@track sObjectRowFields = [];
+	@track headers = [];
 	@track reportLines = [];
 	////// PIVOT TABLE /////
 

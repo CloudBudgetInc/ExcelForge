@@ -213,8 +213,15 @@
 				<div class="slds-p-around_medium">
 					{reportLines.length}
 					<table>
+						<tr>
+							<template for:each={headers} for:item='h'>
+								<td key={h}>
+									<div class="tableHeader">{h}</div>
+								</td>
+							</template>
+						</tr>
 						<template for:each={reportLines} for:item='rl'>
-							<tr key={rl}>
+							<tr key={rl} class={rl.styleClass}>
 								<template for:each={rl.titles} for:item='title'>
 									<td key={title}>
 										{title}
