@@ -209,10 +209,26 @@
 							</template>
 						</div>
 					</lightning-layout-item>
+					<lightning-layout-item>
+						Formula Values
+						<div class="slds-box boxForFieldsStyle">
+							<template for:each={dataSet.exf__PivotConfiguration__c.formulaValues} for:item="FValue"
+									  for:index="idx">
+								<lightning-pill key={FValue.label} label={FValue.label} name={idx}
+												ondblclick={showFormulaValueDialog}
+												onremove={removeFormulaValue}></lightning-pill>
+							</template>
+						</div>
+					</lightning-layout-item>
+					<lightning-layout-item>
+						<div class="slds-p-top_large">
+							<lightning-button label="Add Formula Value" variant="brand"
+											  onclick={showFormulaValueDialog}></lightning-button>
+						</div>
+					</lightning-layout-item>
 				</lightning-layout>
 				<div class="slds-p-around_medium">
-					{reportLines.length}
-					<table>
+					<table class="tableStyle">
 						<tr>
 							<template for:each={headers} for:item='h'>
 								<td key={h}>
@@ -229,7 +245,7 @@
 								</template>
 								<template for:each={rl.values} for:item='value'>
 									<td key={value}>
-										{value}
+										<div class="valueCell">{value}</div>
 									</td>
 								</template>
 							</tr>
@@ -243,5 +259,41 @@
 		</template>
 
 	</lightning-card>
+
+	<template lwc:if={renderFormulaValueDialog}>
+		<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+				 class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container">
+				<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+					<svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+						<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+					</svg>
+					<span class="slds-assistive-text">Close</span>
+				</button>
+				<div class="slds-modal__header">
+					<h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Formula Value Setup</h1>
+				</div>
+				<div class="slds-modal__content slds-p-around_medium">
+					References
+					<template for:each={dataSet.exf__PivotConfiguration__c.values} for:item="value" for:index="index">
+						<div key={value}>
+							{index} : {value}
+						</div>
+					</template>
+					<lightning-input value={openedFormulaValue.label} name="label" label="Label"
+									 onchange={handleFormulaValue}></lightning-input>
+					<lightning-input value={openedFormulaValue.formula} name="formula" label="Formula"
+									 onchange={handleFormulaValue}></lightning-input>
+				</div>
+				<div class="slds-modal__footer">
+					<lightning-button label="Close" onclick={closeFormulaValueDialog}></lightning-button>
+					<lightning-button label="Apply" variant="brand"
+									  onclick={applyFormulaValueDialog}></lightning-button>
+
+				</div>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+	</template>
 
 </template>

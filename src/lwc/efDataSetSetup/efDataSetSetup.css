@@ -42,4 +42,16 @@
     background-color: #f4f4f4;
 }
 
+.valueCell {
+    alignment: right;
+    text-align: right;
+}
+
+.tableStyle {
+    border-collapse: collapse;
+}
+
+.tableStyle, th, td {
+    border: 1px solid;
+}
 

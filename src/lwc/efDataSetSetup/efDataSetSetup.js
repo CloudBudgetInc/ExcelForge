@@ -55,6 +55,7 @@ export default class EFDataSetSetup extends LightningElement {
 	@track sObjectRowFields = [];
 	@track headers = [];
 	@track reportLines = [];
+
 	////// PIVOT TABLE /////
 
 
@@ -209,8 +210,47 @@ export default class EFDataSetSetup extends LightningElement {
 	dropToColumns = (event) => dropFieldToArray(event, 'columns');
 	dropToValues = (event) => dropFieldToArray(event, 'values');
 	removeField = (event) => backFieldToStart(event.target.label);
-
 	///// PIVOT CONFIGURATION /////
+
+	///// FORMULA FIELD DIALOG /////
+	@track renderFormulaValueDialog = false;
+	@track openedFormulaValue;
+	@track openedFormulaIndex;
+	showFormulaValueDialog = (event) => {
+		let idx = event?.target.name;
+		this.renderFormulaValueDialog = true;
+		let formulaValues = this.dataSet.exf__PivotConfiguration__c.formulaValues;
+		if (!formulaValues) { // initialization
+			idx = 0;
+			formulaValues = [{formula: '#1 + #2', label: 'F1'}];
+			this.dataSet.exf__PivotConfiguration__c.formulaValues = formulaValues;
+		}
+		if (idx === undefined) {
+			idx = formulaValues.length;
+			formulaValues.push({formula: '#1 + #2', label: 'F1'});
+		}
+		this.openedFormulaIndex = idx;
+		this.openedFormulaValue = formulaValues[idx];
+	};
+	closeFormulaValueDialog = () => {
+		this.renderFormulaValueDialog = false;
+	};
+	handleFormulaValue = (event) => {
+		this.openedFormulaValue[event.target.name] = event.target.value;
+	};
+	applyFormulaValueDialog = () => {
+		this.dataSet.exf__PivotConfiguration__c.formulaValues[this.openedFormulaIndex] = this.openedFormulaValue;
+		_message('Applied');
+		this.closeFormulaValueDialog();
+		this.saveDataSet();
+	};
+	removeFormulaValue = (event) => {
+		let formulaValues = this.dataSet.exf__PivotConfiguration__c.formulaValues;
+		formulaValues = formulaValues.filter((item, i) => i !== event.target.name);
+		this.dataSet.exf__PivotConfiguration__c.formulaValues = formulaValues;
+		this.saveDataSet();
+	}
+	///// FORMULA FIELD DIALOG /////
 
 
 }
