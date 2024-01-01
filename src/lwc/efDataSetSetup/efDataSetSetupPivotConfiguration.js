@@ -41,8 +41,10 @@ const getPivotSetupFields = () => {
 			context.dataSet.exf__PivotConfiguration__c = JSON.parse(context.dataSet.exf__PivotConfiguration__c);
 		}
 		context.sObjectFields = [];
+		const rowsAndValues = [...context.dataSet.exf__PivotConfiguration__c.rows, ...context.dataSet.exf__PivotConfiguration__c.values];
+		const rowValues = rowsAndValues.map(r => r.value);
 		Object.keys(context.sObjects[0]).forEach(key => {
-			if (context.dataSet.exf__PivotConfiguration__c.rows.includes(key)) return null;
+			if (rowValues.includes(key)) return null;
 			context.sObjectFields.push(key);
 		});
 	} catch (e) {
@@ -74,7 +76,7 @@ const dropFieldToArray = (event, arrName) => {
 	try {
 		event.stopPropagation();
 		const draggedField = context.template.querySelector('.drag').textContent;
-		context.dataSet.exf__PivotConfiguration__c[arrName].push(draggedField);
+		context.dataSet.exf__PivotConfiguration__c[arrName].push({value: draggedField, format: 'item'});
 		context.sObjectFields = context.sObjectFields.filter(f => f !== draggedField);
 		context.template.querySelectorAll('.draggableLine').forEach(element => element.classList.remove('drag'));
 	} catch (e) {

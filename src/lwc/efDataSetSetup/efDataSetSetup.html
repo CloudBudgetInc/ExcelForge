@@ -67,7 +67,7 @@
 					<lightning-layout>
 						<lightning-layout-item size="11">
 							<lightning-input value={dataSet.exf__Fields__c} onchange={handleChanges}
-											 label="Needed Filter"></lightning-input>
+											 label="Select Fields"></lightning-input>
 						</lightning-layout-item>
 						<lightning-layout-item size="1">
 							<div class="slds-m-top_large">
@@ -186,8 +186,9 @@
 						Rows
 						<div class="slds-box boxForFieldsStyle" ondrop={dropToRows}
 							 ondragover={dragOver}>
-							<template for:each={dataSet.exf__PivotConfiguration__c.rows} for:item="field">
-								<lightning-pill key={field} label={field} onremove={removeField}></lightning-pill>
+							<template for:each={dataSet.exf__PivotConfiguration__c.rows} for:item="row">
+								<lightning-pill key={row.value} label={row.value}
+												onremove={removeField}></lightning-pill>
 							</template>
 						</div>
 					</lightning-layout-item>
@@ -195,8 +196,9 @@
 						Columns
 						<div class="slds-box boxForFieldsStyle" ondrop={dropToColumns}
 							 ondragover={dragOver}>
-							<template for:each={dataSet.exf__PivotConfiguration__c.columns} for:item="field">
-								<lightning-pill key={field} label={field} onremove={removeField}></lightning-pill>
+							<template for:each={dataSet.exf__PivotConfiguration__c.columns} for:item="column">
+								<lightning-pill key={column.value} label={column.value}
+												onremove={removeField}></lightning-pill>
 							</template>
 						</div>
 					</lightning-layout-item>
@@ -204,8 +206,9 @@
 						Values
 						<div class="slds-box boxForFieldsStyle" ondrop={dropToValues}
 							 ondragover={dragOver}>
-							<template for:each={dataSet.exf__PivotConfiguration__c.values} for:item="field">
-								<lightning-pill key={field} label={field} onremove={removeField}></lightning-pill>
+							<template for:each={dataSet.exf__PivotConfiguration__c.values} for:item="value">
+								<lightning-pill key={value.value} label={value.value}
+												onremove={removeField}></lightning-pill>
 							</template>
 						</div>
 					</lightning-layout-item>
@@ -284,6 +287,12 @@
 									 onchange={handleFormulaValue}></lightning-input>
 					<lightning-input value={openedFormulaValue.formula} name="formula" label="Formula"
 									 onchange={handleFormulaValue}></lightning-input>
+					<lightning-combobox
+							name="format"
+							label="Format"
+							value={openedFormulaValue.format}
+							options={formatSO}
+							onchange={handleFormulaValue}></lightning-combobox>
 				</div>
 				<div class="slds-modal__footer">
 					<lightning-button label="Close" onclick={closeFormulaValueDialog}></lightning-button>

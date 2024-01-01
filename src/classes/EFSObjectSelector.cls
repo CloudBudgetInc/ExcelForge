@@ -52,8 +52,12 @@ public with sharing class EFSObjectSelector {
 			try {
 				Map<String, Object> jsonMap = (Map<String, Object>) JSON.deserializeUntyped(dataSet.exf__PivotConfiguration__c);
 				System.debug(jsonMap.get('rows'));
-				List<Object> rowsList = (List<Object>) jsonMap.get('rows');
-				ob = ' ORDER BY ' + String.join(rowsList, ',') + ' ';
+				List<Map<String, String>> listOfMaps = (List<Map<String, String>>) jsonMap.get('rows');
+				if (listOfMaps.size() > 0) {
+					List<String> rowsList = new List<String>();
+					for (Map<String, String> m : listOfMaps) rowsList.add(m.get('value'));
+					ob = ' ORDER BY ' + String.join(rowsList, ',') + ' ';
+				}
 			} catch (Exception e) {
 				System.debug('ERROR: ' + e);
 			}

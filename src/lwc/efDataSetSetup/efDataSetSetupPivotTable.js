@@ -41,6 +41,8 @@ const renderPivotExampleTable = () => {
 	try {
 		const dataArray = context.sObjects;
 		const pivotConfiguration = context.dataSet.exf__PivotConfiguration__c;
+
+		console.log('context.dataSet.exf__PivotConfiguration__c:' + JSON.stringify(context.dataSet.exf__PivotConfiguration__c));
 		if (!dataArray || !pivotConfiguration) return null;
 		rows = pivotConfiguration.rows;
 		columns = pivotConfiguration.columns;
@@ -48,6 +50,7 @@ const renderPivotExampleTable = () => {
 		getExampleTableHeader();
 		const gropedData = groupData(dataArray);
 		context.reportLines = generateReportLines(gropedData);
+		calculateFormulaLines();
 	} catch (e) {
 		_message('error', 'Render Pivot Table Error ' + e);
 	}
@@ -66,7 +69,9 @@ const getRecordKey = (rows, record) => rows.map(f => record[f]).join('');
 const getNewGroup = () => _getCopy(group);
 
 const getExampleTableHeader = () => {
-	context.headers = [...rows, ...values];
+	context.headers = [];
+	if (rows) rows.forEach(r => context.headers.push(r.value));
+	if (values) values.forEach(v => context.headers.push(v.value));
 };
 
 const groupData = (dataArray) => {
@@ -78,13 +83,14 @@ const groupData = (dataArray) => {
 			if (lvl === lastLvl) {
 				group.dataLines.push(dataLine);
 			} else {
-				const key = getRecordKey(rows.slice(0, lvl + 1), dataLine);
+				const rowValues = rows.map(r => r.value);
+				const key = getRecordKey(rowValues.slice(0, lvl + 1), dataLine);
 				let childGroup = group.groups.find(gr => gr.key === key);
 				if (!childGroup) {
 					childGroup = getNewGroup();
 					childGroup.key = key;
 					childGroup.lvl = lvl;
-					childGroup.titles = [...group.titles, dataLine[rows[lvl]]];
+					childGroup.titles = [...group.titles, dataLine[rowValues[lvl]]];
 					group.groups.push(childGroup);
 				}
 				fillGroups(dataLine, childGroup, lvl + 1);
@@ -110,8 +116,8 @@ const getNewReportLine = (titles, dl) => {
 	const newRL = _getCopy(reportLine);
 	newRL.titles = titles;
 	if (dl) {
-		values.forEach(valField => {
-			let val = dl[valField];
+		values.forEach(v => {
+			let val = dl[v.value];
 			if (!val) val = 0;
 			newRL.values.push(val);
 		});
@@ -168,6 +174,38 @@ const generateReportLines = (gropedData) => {
 	});
 	//console.log('ReportLines : ' + JSON.stringify(reportLines));
 	return reportLines;
+};
+
+const calculateFormulaLines = () => {
+	const formulaSettings = context.dataSet.exf__PivotConfiguration__c.formulaValues;
+	if (!formulaSettings) return null;
+	const applyFormula = (formula) => {
+		context.reportLines.forEach(rl => {
+			try {
+				const values = rl.values;
+				let expression = formula;
+				console.log('EX BEFORE : ' + expression);
+				for (let i = 0; i < values.length; i++) {
+					const placeholder = new RegExp(`#${i + 1}`, 'g');
+					expression = expression.replace(placeholder, values[i]);
+				}
+				console.log('EX After : ' + expression);
+				values.push(eval(expression));
+			} catch (e) {
+				_message('error', 'apply formula Error');
+			}
+		});
+	};
+
+	formulaSettings.forEach(fs => {
+		context.headers.push(fs.label);
+		applyFormula(fs.formula);
+	});
+
+};
+
+const applyFormat = () => {
+
 };
 
 

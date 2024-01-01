@@ -55,6 +55,11 @@ export default class EFDataSetSetup extends LightningElement {
 	@track sObjectRowFields = [];
 	@track headers = [];
 	@track reportLines = [];
+	@track formatSO = [
+		{label: 'item', value: 'item'},
+		{label: 'percent', value: 'percent'},
+		{label: 'currency', value: 'currency'}
+	];
 
 	////// PIVOT TABLE /////
 
@@ -84,9 +89,13 @@ export default class EFDataSetSetup extends LightningElement {
 	};
 
 	setRenderRule = () => {
-		this.renderRules.isSingle = this.dataSet.exf__Type__c === 'Single';
-		this.renderRules.isPivot = this.dataSet.exf__Type__c === 'Pivot';
-		this.renderRules = _getCopy(this.renderRules);
+		try {
+			this.renderRules.isSingle = this.dataSet.exf__Type__c === 'Single';
+			this.renderRules.isPivot = this.dataSet.exf__Type__c === 'Pivot';
+			this.renderRules = _getCopy(this.renderRules);
+		} catch (e) {
+			_message('error', 'Set Render Rule Error: ' + e);
+		}
 	};
 
 	handleChanges = (event) => {
@@ -132,11 +141,12 @@ export default class EFDataSetSetup extends LightningElement {
 	@track listOfAvailableFields = [];
 	renderListOfFields = () => {
 		this.showListOfFields = true;
-		this.getListOfAvailableFields();
+		//this.getListOfAvailableFields();
 	};
 	closeListOfFields = () => this.showListOfFields = false;
 	getListOfAvailableFields = async () => {
 		const fieldsMap = await getFieldInfoServer({sObjectName: this.dataSet.exf__SourceType__c}).catch(e => _parseServerError('Get List of Fields Error: ', e));
+		alert('FM:' + JSON.stringify(fieldsMap));
 		if (fieldsMap) {
 			const checkedFields = this.dataSet.exf__Fields__c ? this.dataSet.exf__Fields__c.split(',') : [];
 			const labels = Object.keys(fieldsMap).sort();
@@ -187,18 +197,23 @@ export default class EFDataSetSetup extends LightningElement {
 	//// GET RECORDS ///
 	@track singleRecordExampleTable;
 	getSObjects = async () => {
-		this.singleRecordExampleTable = undefined;
-		this.sObjects = await getSObjectsByEFDataSetIdServer({dsId: this.recordId}).catch(e => console.error('GET SOBJECT ERROR: ' + e));
-		this.sObjects.forEach(o => console.log(JSON.stringify(o)));
-		if (!this.sObjects || this.sObjects.length === 0) return null;
-		if (this.dataSet.exf__Type__c === 'Single') {
-			const record = this.sObjects[0];
-			this.singleRecordExampleTable = Object.keys(record).reduce((r, header) => {
-				let value = record[header];
-				if (value && value.length > 50) value = value.slice(0, 50) + '...';
-				r.push({header, value});
-				return r;
-			}, []);
+		try {
+			this.singleRecordExampleTable = undefined;
+			this.sObjects = await getSObjectsByEFDataSetIdServer({dsId: this.recordId}).catch(e => console.error('GET SOBJECT ERROR: ' + e));
+			console.log('SObjects:' + JSON.stringify(this.sObjects));
+			//this.sObjects.forEach(o => console.log(JSON.stringify(o)));
+			if (!this.sObjects || this.sObjects.length === 0) return null;
+			if (this.dataSet.exf__Type__c === 'Single') {
+				const record = this.sObjects[0];
+				this.singleRecordExampleTable = Object.keys(record).reduce((r, header) => {
+					let value = record[header];
+					if (value && value.length > 50) value = value.slice(0, 50) + '...';
+					r.push({header, value});
+					return r;
+				}, []);
+			}
+		} catch (e) {
+			_message('error', 'Get SObjects Error : ' + e);
 		}
 	};
 	//// GET RECORDS ///
