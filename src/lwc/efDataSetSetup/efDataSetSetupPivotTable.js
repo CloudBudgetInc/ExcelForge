@@ -72,7 +72,7 @@ const getNewGroup = () => _getCopy(group);
 const getExampleTableHeader = () => {
 	context.headers = [];
 	if (rows) rows.forEach(r => context.headers.push(r.value));
-	if (values) values.forEach(v => context.headers.push(v.value));
+	if (values) values.forEach(v => context.headers.push(v.label));
 };
 
 const groupData = (dataArray) => {
