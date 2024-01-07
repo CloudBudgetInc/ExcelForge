@@ -108,13 +108,16 @@ const setExcelRows = (tableSheet, rows, cells) => {
 
 const getCellValue = (cell) => {
 	try {
-		console.log('Get Value for ' + cell.Name + ' => ' + cell.exf__EFDataSet__c);
+		//console.log('Get Value for ' + cell.Name + ' => ' + cell.exf__EFDataSet__c);
 		if (!cell.exf__EFDataSet__c) return cell.exf__Value__c;
-		const sObject = c.sObjectsMap[cell.exf__EFDataSet__c][0];
-		console.log('sObject:' + JSON.stringify(sObject));
-		console.log('cell.DataSetField__c:' + cell.exf__DataSetField__c);
-		console.log('val:' + sObject[cell.exf__DataSetField__c]);
-		return sObject[cell.exf__DataSetField__c];
+		const dataSet = c.dSetMap[cell.exf__EFDataSet__c];
+		if (dataSet.exf__Type__c === 'Single') {
+			const sObject = c.sObjectsMap[cell.exf__EFDataSet__c][0];
+			return sObject[cell.exf__DataSetField__c];
+		} else {
+			alert('CELL:' + JSON.stringify(cell));
+			return 'PIVOT';
+		}
 	} catch (e) {
 		_message('error', 'Get Cell Value Error : ' + e);
 	}

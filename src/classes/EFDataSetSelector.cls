@@ -61,7 +61,9 @@ public with sharing class EFDataSetSelector {
 						Id,
 						Name,
 						SourceType__c,
-						TotalonTop__c
+						TotalonTop__c,
+						exf__Type__c,
+						exf__PivotConfiguration__c
 				FROM EFDataSet__c
 				WHERE Id IN:setIds
 				ORDER BY Name

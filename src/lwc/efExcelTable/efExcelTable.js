@@ -31,6 +31,7 @@ export default class EFExcelTable extends LightningElement {
 
 	@api tableStructure = {};
 	@api sObjectsMap = {};
+	@api dSetMap = {};
 
 	@track showSpinner = false;
 	@track template = {};

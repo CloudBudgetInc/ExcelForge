@@ -49,6 +49,7 @@ export default class EFExcelPreview extends LightningElement {
 	@track cells = [];
 	@track styles = [];
 
+	@track dataSetMap = {}; // key is dataSet Id, value is dataset
 	@track sObjectsMap = {}; // key is dataSet Id, value is a list ov sObjects
 
 	@track tableStructure = {};
@@ -63,22 +64,26 @@ export default class EFExcelPreview extends LightningElement {
 			this.showSpinner = true;
 			this.tableStructure = {};
 			await this.getTemplate();
-			console.log('template' + JSON.stringify(this.template));
+			//console.log('template' + JSON.stringify(this.template));
 			await this.getDataSets();
-			console.log('dSets' + JSON.stringify(this.dSets));
+			this.dataSetMap = this.dSets.reduce((r, ds) => {
+				r[ds.Id] = ds;
+				return r;
+			}, {});
+			//console.log('dSets' + JSON.stringify(this.dSets));
 			await this.getSheets();
-			console.log('sheets' + JSON.stringify(this.sheets));
+			//console.log('sheets' + JSON.stringify(this.sheets));
 			await this.getColumns();
-			console.log('columns' + JSON.stringify(this.columns));
+			//console.log('columns' + JSON.stringify(this.columns));
 			await this.getRows();
-			console.log('rows' + JSON.stringify(this.rows));
+			//console.log('rows' + JSON.stringify(this.rows));
 			await this.getCells();
-			console.log('cells' + JSON.stringify(this.cells));
+			//console.log('cells' + JSON.stringify(this.cells));
 			await this.getStyles();
-			console.log('styles' + JSON.stringify(this.styles));
+			//console.log('styles' + JSON.stringify(this.styles));
 
 			await this.getSObjectMap();
-			console.log('sObjectMap' + JSON.stringify(this.sObjectsMap));
+			console.log('/////////  sObjectMap ////////// ' + JSON.stringify(this.sObjectsMap));
 
 			this.tableStructure = ['template', 'dSets', 'sheets', 'columns', 'rows', 'cells', 'styles'].reduce((r, f) => {
 				r[f] = this[f];

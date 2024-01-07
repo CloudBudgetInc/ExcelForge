@@ -11,7 +11,8 @@
 
 		<template lwc:if={showTable}>
 			<div style="overflow: auto; width: 100%">
-				<c-ef-excel-table table-structure={tableStructure} s-objects-map={sObjectsMap}></c-ef-excel-table>
+				<c-ef-excel-table table-structure={tableStructure} s-objects-map={sObjectsMap}
+								  d-set-map={dataSetMap}></c-ef-excel-table>
 			</div>
 		</template>
 	</lightning-card>
