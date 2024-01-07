@@ -188,6 +188,27 @@ const _setCell = (cell, value, fill, font, numFmt, alignment, border) => {
 	cell.border = border;
 };
 
+const _applyFormat = (value, format) => {
+	if (!value || isNaN(value)) return '';
+	switch (format) {
+		case 'general':
+			return value;
+		case 'number':
+			const [integerPart, decimalPart] = Number(value).toFixed(2).split(".");
+			const integerWithCommas = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			return integerWithCommas + "." + decimalPart;
+		case 'percent':
+			const formattedPercentage = (Number(value) * 100).toFixed(2);
+			return formattedPercentage + "%";
+		case 'currency':
+			const formattedNumber = Number(value).toFixed(2);
+			const numberWithCommas = formattedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			return "$" + numberWithCommas;
+		default:
+			return value;
+	}
+};
+
 /**
  * Method to popup a SF confirm window
  * @param message "Are you sure you want to ...."
@@ -236,5 +257,6 @@ export {
 	_parseServerError,
 	_setCell,
 	_confirm,
-	_prompt
+	_prompt,
+	_applyFormat
 };

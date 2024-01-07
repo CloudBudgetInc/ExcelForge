@@ -54,7 +54,9 @@ const getPivotSetupFields = () => {
 
 
 const backFieldToStart = (field) => {
-	['rows', 'columns', 'values'].forEach(type => context.dataSet.exf__PivotConfiguration__c[type] = context.dataSet.exf__PivotConfiguration__c[type].filter(f => f !== field));
+	['rows', 'columns', 'values'].forEach(type => {
+		context.dataSet.exf__PivotConfiguration__c[type] = context.dataSet.exf__PivotConfiguration__c[type].filter(obj => obj.value !== field);
+	});
 	context.sObjectFields.push(field);
 };
 
@@ -76,7 +78,7 @@ const dropFieldToArray = (event, arrName) => {
 	try {
 		event.stopPropagation();
 		const draggedField = context.template.querySelector('.drag').textContent;
-		context.dataSet.exf__PivotConfiguration__c[arrName].push({value: draggedField, format: 'item'});
+		context.dataSet.exf__PivotConfiguration__c[arrName].push({value: draggedField, format: 'general'});
 		context.sObjectFields = context.sObjectFields.filter(f => f !== draggedField);
 		context.template.querySelectorAll('.draggableLine').forEach(element => element.classList.remove('drag'));
 	} catch (e) {

@@ -206,8 +206,10 @@
 						Values
 						<div class="slds-box boxForFieldsStyle" ondrop={dropToValues}
 							 ondragover={dragOver}>
-							<template for:each={dataSet.exf__PivotConfiguration__c.values} for:item="value">
-								<lightning-pill key={value.value} label={value.value}
+							<template for:each={dataSet.exf__PivotConfiguration__c.values} for:item="value"
+									  for:index="idx">
+								<lightning-pill key={value.value} label={value.value} ondblclick={showValueDialog}
+												name={idx}
 												onremove={removeField}></lightning-pill>
 							</template>
 						</div>
@@ -263,6 +265,43 @@
 
 	</lightning-card>
 
+	<!-- Dialog to setup value -->
+	<template lwc:if={renderValueDialog}>
+		<section role="dialog" tabindex="-1"
+				 class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container">
+				<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+					<svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+						<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+					</svg>
+					<span class="slds-assistive-text">Close</span>
+				</button>
+				<div class="slds-modal__header">
+					<h1 class="slds-modal__title slds-hyphenate">Formula Value Setup</h1>
+				</div>
+				<div class="slds-modal__content slds-p-around_medium">
+					<lightning-input value={openedValue.label} name="label" label="Label"
+									 onchange={handleValueSetup}></lightning-input>
+					<lightning-combobox
+							name="format"
+							label="Format"
+							value={openedValue.format}
+							options={formatSO}
+							onchange={handleValueSetup}></lightning-combobox>
+				</div>
+				<div class="slds-modal__footer">
+					<lightning-button label="Close" onclick={closeValueDialog}></lightning-button>
+					<lightning-button label="Apply" variant="brand"
+									  onclick={applyValueDialog}></lightning-button>
+
+				</div>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+	</template>
+	<!-- Dialog to setup value -->
+
+	<!-- Dialog to setup formula value -->
 	<template lwc:if={renderFormulaValueDialog}>
 		<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
 				 class="slds-modal slds-fade-in-open">
@@ -274,13 +313,13 @@
 					<span class="slds-assistive-text">Close</span>
 				</button>
 				<div class="slds-modal__header">
-					<h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Formula Value Setup</h1>
+					<h1 class="slds-modal__title slds-hyphenate">Formula Value Setup</h1>
 				</div>
 				<div class="slds-modal__content slds-p-around_medium">
 					References
 					<template for:each={dataSet.exf__PivotConfiguration__c.values} for:item="value" for:index="index">
 						<div key={value}>
-							{index} : {value}
+							{index} : {value.value}
 						</div>
 					</template>
 					<lightning-input value={openedFormulaValue.label} name="label" label="Label"
@@ -304,5 +343,6 @@
 		</section>
 		<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
 	</template>
+	<!-- Dialog to setup formula value -->
 
 </template>

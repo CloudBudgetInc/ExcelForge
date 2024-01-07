@@ -26,7 +26,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 //import {_getCopy, _message, _parseServerError} from "c/efUtils";
-import {_getCopy, _message} from "c/efUtils";
+import {_applyFormat, _getCopy, _message} from "c/efUtils";
 
 let context;
 let headers;
@@ -51,6 +51,7 @@ const renderPivotExampleTable = () => {
 		const gropedData = groupData(dataArray);
 		context.reportLines = generateReportLines(gropedData);
 		calculateFormulaLines();
+		applyFormat();
 	} catch (e) {
 		_message('error', 'Render Pivot Table Error ' + e);
 	}
@@ -184,12 +185,10 @@ const calculateFormulaLines = () => {
 			try {
 				const values = rl.values;
 				let expression = formula;
-				console.log('EX BEFORE : ' + expression);
 				for (let i = 0; i < values.length; i++) {
 					const placeholder = new RegExp(`#${i + 1}`, 'g');
 					expression = expression.replace(placeholder, values[i]);
 				}
-				console.log('EX After : ' + expression);
 				values.push(eval(expression));
 			} catch (e) {
 				_message('error', 'apply formula Error');
@@ -205,6 +204,15 @@ const calculateFormulaLines = () => {
 };
 
 const applyFormat = () => {
+	_applyFormat();
+	const tableColumns = [...context.dataSet.exf__PivotConfiguration__c.values, ...context.dataSet.exf__PivotConfiguration__c.formulaValues];
+	tableColumns.forEach((col, idx) => {
+		const format = col.format;
+		context.reportLines.forEach(rl => {
+			const formattedValue = _applyFormat(rl.values[idx], format);
+			rl.values[idx] = formattedValue;
+		});
+	});
 
 };
 

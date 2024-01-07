@@ -56,7 +56,8 @@ export default class EFDataSetSetup extends LightningElement {
 	@track headers = [];
 	@track reportLines = [];
 	@track formatSO = [
-		{label: 'item', value: 'item'},
+		{label: 'general', value: 'general'},
+		{label: 'number', value: 'number'},
 		{label: 'percent', value: 'percent'},
 		{label: 'currency', value: 'currency'}
 	];
@@ -141,7 +142,6 @@ export default class EFDataSetSetup extends LightningElement {
 	@track listOfAvailableFields = [];
 	renderListOfFields = () => {
 		this.showListOfFields = true;
-		//this.getListOfAvailableFields();
 	};
 	closeListOfFields = () => this.showListOfFields = false;
 	getListOfAvailableFields = async () => {
@@ -227,22 +227,49 @@ export default class EFDataSetSetup extends LightningElement {
 	removeField = (event) => backFieldToStart(event.target.label);
 	///// PIVOT CONFIGURATION /////
 
+	/////  VALUE SETUP /////
+	@track renderValueDialog = false;
+	@track openedValueIndex = 0;
+	@track openedValue = {};
+	showValueDialog = (event) => {
+		let idx = event?.target.name;
+		this.openedValueIndex = idx;
+		this.openedValue =  this.dataSet.exf__PivotConfiguration__c.values[idx];
+		this.renderValueDialog = true;
+	};
+	handleValueSetup = (event) => {
+		this.openedValue[event.target.name] = event.target.value;
+	};
+	closeValueDialog = () => {
+		this.renderValueDialog = false;
+	};
+	applyValueDialog = () => {
+		this.dataSet.exf__PivotConfiguration__c.values[this.openedValueIndex] = this.openedValue;
+		_message('Applied');
+		this.closeValueDialog();
+		this.saveDataSet();
+	};
+	/////  VALUE SETUP /////
+
 	///// FORMULA FIELD DIALOG /////
 	@track renderFormulaValueDialog = false;
 	@track openedFormulaValue;
 	@track openedFormulaIndex;
+	/**
+	 * Handler opens dialog to setup formula value
+	 */
 	showFormulaValueDialog = (event) => {
 		let idx = event?.target.name;
 		this.renderFormulaValueDialog = true;
 		let formulaValues = this.dataSet.exf__PivotConfiguration__c.formulaValues;
 		if (!formulaValues) { // initialization
 			idx = 0;
-			formulaValues = [{formula: '#1 + #2', label: 'F1'}];
+			formulaValues = [{formula: '#1 + #2', label: 'F1', format: 'general'}];
 			this.dataSet.exf__PivotConfiguration__c.formulaValues = formulaValues;
 		}
 		if (idx === undefined) {
 			idx = formulaValues.length;
-			formulaValues.push({formula: '#1 + #2', label: 'F1'});
+			formulaValues.push({formula: '#1 + #2', label: 'F1', format: 'general'});
 		}
 		this.openedFormulaIndex = idx;
 		this.openedFormulaValue = formulaValues[idx];
