@@ -1,4 +1,5 @@
-import {_message} from "c/efUtils";
+import {_getCopy, _message} from "c/efUtils";
+import {getPivotTableObject} from "c/efPivotTable";
 
 let c;
 let styleMap = {}; // key is style Id, value is EFStyle object
@@ -6,6 +7,8 @@ const sheets = [];
 const MIN_SHEET_WIDTH = 20;
 const MIN_SHEET_HEIGHT = 50;
 const DEFAULT_COLUMN_WIDTH = 75;
+
+const pivotTableTasks = [];
 
 const setContext = (context) => {
 	c = context;
@@ -79,7 +82,7 @@ const setExcelTopHeaderAndTableWidth = (tableSheet, columns) => {
 
 const setExcelRows = (tableSheet, rows, cells) => {
 	try {
-		const tableRows = [];
+		let tableRows = [];
 		const rowCellMatrix = getRowCellMatrix(cells);
 		const rowsMap = rows.reduce((r, row) => { // in the future style for whole row
 			r[row.exf__Index__c] = row.exf__Width__c;
@@ -100,6 +103,7 @@ const setExcelRows = (tableSheet, rows, cells) => {
 			}
 			tableRows.push(tableRow);
 		}
+		tableRows = populateCellsWithPivotTable(tableRows);
 		tableSheet.rows = tableRows;
 	} catch (e) {
 		_message('error', 'Set Excel Rows Error : ' + e);
@@ -115,12 +119,60 @@ const getCellValue = (cell) => {
 			const sObject = c.sObjectsMap[cell.exf__EFDataSet__c][0];
 			return sObject[cell.exf__DataSetField__c];
 		} else {
-			alert('CELL:' + JSON.stringify(cell));
-			return 'PIVOT';
+			return '$PT' + cell.exf__EFDataSet__c;
 		}
 	} catch (e) {
 		_message('error', 'Get Cell Value Error : ' + e);
 	}
+};
+
+const populateCellsWithPivotTable = (tableRows) => {
+	try {
+		let updatedTableRows = _getCopy(tableRows);
+		tableRows.forEach((row, rIdx) => {
+			row.cells.forEach((cell, cellIdx) => {
+				if (cell?.value?.includes('$PT')) {
+					addPivotTableCells(updatedTableRows, rIdx, cellIdx, cell.value.replace('$PT', ''));
+				}
+			})
+		});
+		return updatedTableRows;
+	} catch (e) {
+		_message('error', 'Populate Pivot Table Error ' + e);
+	}
+};
+
+const addPivotTableCells = (tableRows, rIdx, cellIdx, dataSetId) => {
+	try {
+		const dataSet = c.dSetMap[dataSetId];
+		const dataList = c.sObjectsMap[dataSetId];
+		const config = JSON.parse(dataSet.exf__PivotConfiguration__c);
+		let pivotTableObject = getPivotTableObject(dataList, config);
+		const headers = pivotTableObject.headers;
+		const reportLines = pivotTableObject.reportLines;
+
+		const headerRow = tableRows[rIdx];
+		let headerColIdx = cellIdx;
+		headers.forEach(header => {
+			const cell = headerRow.cells[headerColIdx];
+			cell.value = header;
+			headerColIdx++;
+		});
+
+		let rlRowIdx = rIdx;
+		reportLines.forEach(rl => {
+			const rlRow = tableRows[++rlRowIdx];
+			const values = [...rl.titles, ...rl.values];
+			let rlColIdx = cellIdx;
+			values.forEach(v => {
+				const cell = rlRow.cells[rlColIdx++];
+				cell.value = v;
+			})
+		});
+	} catch (e) {
+		_message('error', 'Add Pivot Table Cells Error ' + e);
+	}
+
 };
 
 const getCSSStyle = (styleId) => {
