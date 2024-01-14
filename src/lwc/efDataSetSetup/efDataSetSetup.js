@@ -25,6 +25,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {api, LightningElement, track} from 'lwc';
 import {_getCopy, _message, _parseServerError} from "c/efUtils";
+import {getPivotTableObject} from "c/efPivotTable";
 import getEFDataSetByIdServer from '@salesforce/apex/EFDataSetSelector.getEFDataSetByIdServer';
 import searchSObjectsServer from '@salesforce/apex/EFUtils.searchSObjectsServer';
 import getSingleRecordsServer from '@salesforce/apex/EFUtils.getSingleRecordsServer';
@@ -39,7 +40,6 @@ import {
 	getPivotSetupFields,
 	setContext
 } from "./efDataSetSetupPivotConfiguration";
-import {renderPivotExampleTable, setTableContext} from "./efDataSetSetupPivotTable";
 
 
 export default class EFDataSetSetup extends LightningElement {
@@ -50,17 +50,17 @@ export default class EFDataSetSetup extends LightningElement {
 	@track dataSet = {};
 	@track renderRules = {isSingle: true, isPivot: false};
 	@track sObjects = [];
-	////// PIVOT TABLE /////
-	@track sObjectFields = [];
-	@track sObjectRowFields = [];
-	@track headers = [];
-	@track reportLines = [];
 	@track formatSO = [
 		{label: 'general', value: 'general'},
 		{label: 'number', value: 'number'},
 		{label: 'percent', value: 'percent'},
 		{label: 'currency', value: 'currency'}
 	];
+	@track sObjectFields = [];
+	@track sObjectRowFields = [];
+	////// PIVOT TABLE /////
+	@track headers = [];
+	@track reportLines = [];
 
 	////// PIVOT TABLE /////
 
@@ -78,8 +78,15 @@ export default class EFDataSetSetup extends LightningElement {
 			if (this.dataSet.exf__Type__c === 'Pivot') {
 				setContext(this);
 				getPivotSetupFields(this);
-				setTableContext(this);
-				renderPivotExampleTable();
+				//setTableContext(this);
+				//renderPivotExampleTable();
+
+				let res = getPivotTableObject(this.sObjects, this.dataSet.exf__PivotConfiguration__c);
+				this.headers = res.headers;
+				this.reportLines = res.reportLines;
+				//alert('RESULT');
+				console.log('RES: ' + JSON.stringify(res));
+
 			}
 			this.showSpinner = false;
 			this.renderScreen = true;
@@ -234,7 +241,7 @@ export default class EFDataSetSetup extends LightningElement {
 	showValueDialog = (event) => {
 		let idx = event?.target.name;
 		this.openedValueIndex = idx;
-		this.openedValue =  this.dataSet.exf__PivotConfiguration__c.values[idx];
+		this.openedValue = this.dataSet.exf__PivotConfiguration__c.values[idx];
 		this.renderValueDialog = true;
 	};
 	handleValueSetup = (event) => {

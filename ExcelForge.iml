@@ -2302,10 +2302,6 @@
                             <option name="selected" value="true" />
                           </MetadataEntry>
                           <MetadataEntry>
-                            <option name="name" value="efDataSetSetup/efDataSetSetupPivotTable.js" />
-                            <option name="selected" value="true" />
-                          </MetadataEntry>
-                          <MetadataEntry>
                             <option name="folder" value="true" />
                             <option name="name" value="efPivotTable" />
                             <option name="selected" value="true" />

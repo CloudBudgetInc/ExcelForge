@@ -30,18 +30,17 @@ let pivotConfiguration;
 
 let context;
 let headers;
+let reportLines;
 let rows;
 let columns;
 let values;
-let reportLines;
-
 
 const setInitialData = (da, pc) => {
 	dataArray = da;
 	pivotConfiguration = pc;
 };
 
-const renderPivotExampleTable = () => {
+const renderPivotTable = () => {
 	try {
 		if (!dataArray || !pivotConfiguration) return null;
 		rows = pivotConfiguration.rows;
@@ -216,5 +215,15 @@ const applyFormat = () => {
 
 };
 
+const getResult = () => {
+	return {headers, reportLines};
+};
 
-export {setInitialData, renderPivotExampleTable}
+const getPivotTableObject = (da, pc) => {
+	setInitialData(da, pc);
+	renderPivotTable();
+	return {headers, reportLines};
+};
+
+
+export {getPivotTableObject}
