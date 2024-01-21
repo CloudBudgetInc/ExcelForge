@@ -1,5 +1,6 @@
 import {_getCopy, _message} from "c/efUtils";
 import {getPivotTableObject} from "c/efPivotTable";
+import {calculateFormulaCells} from "./efExcelFormulas";
 
 let c;
 let styleMap = {}; // key is style Id, value is EFStyle object
@@ -24,32 +25,32 @@ const generateTabs = () => {
 };
 
 const generateTable = () => {
-	console.log('GENERATE TABLE');
+	//console.log('GENERATE TABLE');
 	try {
 		styleMap = c.styles.reduce((r, st) => {
 			r[st.Id] = st;
 			return r;
 		}, {});
-		console.log('Style Map = ' + JSON.stringify(styleMap));
+		//console.log('Style Map = ' + JSON.stringify(styleMap));
 		c.sheets.forEach(sheet => c.allSheets.push(generateSheet(sheet)));
 		c.openedSheet = c.allSheets[0];
-		console.log('OPENED SHEET : ' + JSON.stringify(c.openedSheet));
+		//console.log('OPENED SHEET : ' + JSON.stringify(c.openedSheet));
 	} catch (e) {
 		_message('error', 'Generate Table Error : ' + e);
 	}
 };
 
 const generateSheet = (sheet) => {
-	console.log('GENERATE SHEET : ' + sheet.Name);
+	//console.log('GENERATE SHEET : ' + sheet.Name);
 	try {
 		const tableSheet = {name: sheet.Name, letterHeaders: [], rows: [], Id: sheet.Id}; // list of rows
 		const sheetId = sheet.Id.substring(0, 15);
 		const columns = c.columns.filter(col => col.exf__EFSheet__c.substring(0, 15) === sheetId);
 		const rows = c.rows.filter(row => row.exf__EFSheet__c.substring(0, 15) === sheetId);
 		const cells = c.cells.filter(cell => cell.exf__EFSheet__c === sheetId);
-		console.log('ALL Cells : ' + JSON.stringify(c.cells));
-		console.log('sheet.Id : ' + sheetId);
-		console.log('Cells : ' + JSON.stringify(cells));
+		//console.log('ALL Cells : ' + JSON.stringify(c.cells));
+		//console.log('sheet.Id : ' + sheetId);
+		//console.log('Cells : ' + JSON.stringify(cells));
 		setExcelTopHeaderAndTableWidth(tableSheet, columns);
 		setExcelRows(tableSheet, rows, cells);
 		return tableSheet;
@@ -65,11 +66,11 @@ const setExcelTopHeaderAndTableWidth = (tableSheet, columns) => {
 			r[col.exf__Index__c] = col;
 			return r;
 		}, {});
-		console.log('COL MAP:' + JSON.stringify(columnsMap));
+		//console.log('COL MAP:' + JSON.stringify(columnsMap));
 		let totalTableWidth = 0;
 		generateExcelAlphabetArray(MIN_SHEET_WIDTH).forEach((letter, i) => {
 			const indicatedColumn = columnsMap[i + 1];
-			console.log('col #' + (i + 1) + ' width: ' + indicatedColumn?.exf__Width__c);
+			//console.log('col #' + (i + 1) + ' width: ' + indicatedColumn?.exf__Width__c);
 			const width = indicatedColumn?.exf__Width__c ? indicatedColumn?.exf__Width__c : DEFAULT_COLUMN_WIDTH;
 			totalTableWidth += +width;
 			tableSheet.letterHeaders.push({s: `width: ${width}px`, letter, Id: indicatedColumn?.Id, idx: i + 1});
@@ -97,13 +98,15 @@ const setExcelRows = (tableSheet, rows, cells) => {
 					colIdx: colIdx + 1,
 					cellId: cell ? cell.Id : undefined,
 					value: cell ? getCellValue(cell) : '',
-					style: getCSSStyle(cell?.exf__EFStyle__c)
+					style: getCSSStyle(cell?.exf__EFStyle__c),
+					formula: cell?.exf__Formula__c
 				};
 				tableRow.cells.push(tableCell);
 			}
 			tableRows.push(tableRow);
 		}
 		tableRows = populateCellsWithPivotTable(tableRows);
+		tableRows = calculateFormulaCells(tableRows);
 		tableSheet.rows = tableRows;
 	} catch (e) {
 		_message('error', 'Set Excel Rows Error : ' + e);
@@ -113,7 +116,7 @@ const setExcelRows = (tableSheet, rows, cells) => {
 const getCellValue = (cell) => {
 	try {
 		//console.log('Get Value for ' + cell.Name + ' => ' + cell.exf__EFDataSet__c);
-		if (!cell.exf__EFDataSet__c) return cell.exf__Value__c;
+		if (!cell.exf__EFDataSet__c) return cell.exf__Value__c; // no Data sets
 		const dataSet = c.dSetMap[cell.exf__EFDataSet__c];
 		if (dataSet.exf__Type__c === 'Single') {
 			const sObject = c.sObjectsMap[cell.exf__EFDataSet__c][0];

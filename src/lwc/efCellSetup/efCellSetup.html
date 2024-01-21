@@ -31,6 +31,11 @@
 											 onchange={handleChanges}></lightning-input>
 						</lightning-layout-item>
 						<lightning-layout-item>
+							<lightning-input label="Formula" value={cell.exf__Formula__c} name="exf__Formula__c"
+											 disabled={cell.exf__EFDataSet__c}
+											 onchange={handleChanges}></lightning-input>
+						</lightning-layout-item>
+						<lightning-layout-item>
 							<lightning-record-edit-form object-api-name="exf__EFCell__c">
 								<lightning-input-field
 										field-name="exf__EFStyle__c"
