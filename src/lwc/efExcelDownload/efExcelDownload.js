@@ -99,6 +99,9 @@ export default class EFExcelDownload extends LightningElement {
 					const excelCell = excelRow.getCell(cellCounter); //(cell, value, fill, font, numFmt, alignment, border)
 					const excelStyleMap = this.convertCSSToExcelStyle(dataCell.style);
 					_setCell(excelCell, dataCell.value, excelStyleMap?.fill, excelStyleMap?.font);
+					if (dataCell.formula) {
+						excelCell.value = {formula: dataCell.formula, result: dataCell.value};
+					}
 				})
 			})
 		} catch (e) {
