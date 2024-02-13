@@ -43,7 +43,14 @@ const generateTable = () => {
 const generateSheet = (sheet) => {
 	//console.log('GENERATE SHEET : ' + sheet.Name);
 	try {
-		const tableSheet = {name: sheet.Name, letterHeaders: [], rows: [], Id: sheet.Id}; // list of rows
+		const tableSheet = {
+			name: sheet.Name,
+			letterHeaders: [],
+			rows: [],
+			Id: sheet.Id,
+			rowNumber: sheet.exf__NumberOfRows__c || MIN_SHEET_HEIGHT,
+			colNumber: sheet.exf__NumberOfColumns__c || MIN_SHEET_WIDTH,
+		}; // list of rows
 		const sheetId = sheet.Id.substring(0, 15);
 		const columns = c.columns.filter(col => col.exf__EFSheet__c.substring(0, 15) === sheetId);
 		const rows = c.rows.filter(row => row.exf__EFSheet__c.substring(0, 15) === sheetId);
@@ -81,17 +88,24 @@ const setExcelTopHeaderAndTableWidth = (tableSheet, columns) => {
 	}
 };
 
+/**
+ * Method generates a structure of sheet with empty rows and columns
+ * @param tableSheet
+ * @param rows
+ * @param cells
+ */
 const setExcelRows = (tableSheet, rows, cells) => {
 	try {
+
 		let tableRows = [];
 		const rowCellMatrix = getRowCellMatrix(cells);
 		const rowsMap = rows.reduce((r, row) => { // in the future style for whole row
 			r[row.exf__Index__c] = row.exf__Width__c;
 			return r;
 		}, {});
-		for (let rowIdx = 0; rowIdx < MIN_SHEET_HEIGHT; rowIdx++) { // ROW is X, Column is Y
+		for (let rowIdx = 0; rowIdx < tableSheet.rowNumber; rowIdx++) { // ROW is X, Column is Y
 			const tableRow = {numberHeader: {number: rowIdx + 1}, cells: []};
-			for (let colIdx = 0; colIdx < MIN_SHEET_WIDTH; colIdx++) {
+			for (let colIdx = 0; colIdx < tableSheet.colNumber; colIdx++) {
 				const cell = rowCellMatrix[rowIdx + 1]?.[colIdx + 1];
 				const tableCell = {
 					rowIdx: rowIdx + 1,
@@ -144,7 +158,13 @@ const populateCellsWithPivotTable = (tableRows) => {
 		_message('error', 'Populate Pivot Table Error ' + e);
 	}
 };
-
+/**
+ * Method integrates pivot table to an excel sheet
+ * @param tableRows
+ * @param rIdx
+ * @param cellIdx
+ * @param dataSetId
+ */
 const addPivotTableCells = (tableRows, rIdx, cellIdx, dataSetId) => {
 	try {
 		const dataSet = c.dSetMap[dataSetId];
@@ -164,7 +184,12 @@ const addPivotTableCells = (tableRows, rIdx, cellIdx, dataSetId) => {
 
 		let rlRowIdx = rIdx;
 		reportLines.forEach(rl => {
-			const rlRow = tableRows[++rlRowIdx];
+			let rlRow = tableRows[++rlRowIdx];
+			if (!rlRow) {
+				_message('warning', 'Not enough rows');
+				return null;
+			}
+			console.log('---- ' + JSON.stringify(rlRow));
 			const values = [...rl.titles, ...rl.values];
 			let rlColIdx = cellIdx;
 			values.forEach(v => {

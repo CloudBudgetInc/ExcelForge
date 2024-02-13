@@ -29,12 +29,12 @@ public with sharing class EFSheetSelector {
 
 	@AuraEnabled
 	public static EFSheet__c getEFSheetByIdServer(String tId) {
-		return [SELECT Id,XSplit__c,YSplit__c,EFTemplate__c,Name FROM EFSheet__c WHERE Id = :tId];
+		return [SELECT Id,XSplit__c,YSplit__c,EFTemplate__c,NumberOfRows__c,NumberOfColumns__c,Name FROM EFSheet__c WHERE Id = :tId];
 	}
 
 	@AuraEnabled
 	public static List<EFSheet__c> getAllEFSheetsByTemplateIdServer(String tId) {
-		return [SELECT Id,XSplit__c,YSplit__c,EFTemplate__c,Name FROM EFSheet__c WHERE EFTemplate__c = :tId ORDER BY Name LIMIT 5000];
+		return [SELECT Id,XSplit__c,YSplit__c,EFTemplate__c,NumberOfRows__c,NumberOfColumns__c,Name FROM EFSheet__c WHERE EFTemplate__c = :tId ORDER BY Name LIMIT 5000];
 	}
 
 }

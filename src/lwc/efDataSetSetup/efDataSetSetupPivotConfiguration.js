@@ -54,10 +54,14 @@ const getPivotSetupFields = () => {
 
 
 const backFieldToStart = (field) => {
-	['rows', 'columns', 'values'].forEach(type => {
-		context.dataSet.exf__PivotConfiguration__c[type] = context.dataSet.exf__PivotConfiguration__c[type].filter(obj => obj.value !== field);
-	});
-	context.sObjectFields.push(field);
+	try {
+		['rows', 'columns', 'values'].forEach(type => {
+			context.dataSet.exf__PivotConfiguration__c[type] = context.dataSet.exf__PivotConfiguration__c[type].filter(obj => obj.value !== field);
+		});
+		context.sObjectFields.push(field);
+	} catch (e) {
+		_message('error', 'Back field to start error: ' + e);
+	}
 };
 
 ////// DRAG AND DROP /////

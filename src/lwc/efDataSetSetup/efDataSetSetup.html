@@ -41,7 +41,7 @@
 						<lightning-layout>
 							<lightning-layout-item size="8">
 								<lightning-input value={searchSourceName} onchange={handleSearchString}
-												 label="Type a here"></lightning-input>
+												 label="Search by name"></lightning-input>
 							</lightning-layout-item>
 							<lightning-layout-item size="2">
 								<div class="slds-m-top_large">
@@ -71,11 +71,12 @@
 						</lightning-layout-item>
 						<lightning-layout-item size="1">
 							<div class="slds-m-top_large">
-								<lightning-button-icon icon-name="utility:edit"
+								<lightning-button-icon icon-name="utility:edit" title="Show all options"
 													   onclick={renderListOfFields}></lightning-button-icon>
 							</div>
 						</lightning-layout-item>
 					</lightning-layout>
+					<!-- LIST OF sObject Fields -->
 					<template lwc:if={showListOfFields}>
 						<div style="height: 200px !important; overflow-y: scroll">
 							<lightning-button-icon icon-name="utility:close"
@@ -88,6 +89,7 @@
 							</template>
 						</div>
 					</template>
+					<!-- LIST OF sObject Fields -->
 				</lightning-layout-item>
 			</lightning-layout>
 			<lightning-layout class="slds-p-left_medium">
@@ -182,83 +184,85 @@
 						</div>
 					</lightning-layout-item>
 				</lightning-layout>
-				<lightning-layout class="slds-p-left_medium">
-					<lightning-layout-item>
-						Rows
-						<div class="slds-box boxForFieldsStyle" ondrop={dropToRows}
-							 ondragover={dragOver}>
-							<template for:each={dataSet.exf__PivotConfiguration__c.rows} for:item="row">
-								<lightning-pill key={row.value} label={row.value}
-												onremove={removeField}></lightning-pill>
-							</template>
-						</div>
-					</lightning-layout-item>
-					<lightning-layout-item>
-						Columns
-						<div class="slds-box boxForFieldsStyle" ondrop={dropToColumns}
-							 ondragover={dragOver}>
-							<template for:each={dataSet.exf__PivotConfiguration__c.columns} for:item="column">
-								<lightning-pill key={column.value} label={column.value}
-												onremove={removeField}></lightning-pill>
-							</template>
-						</div>
-					</lightning-layout-item>
-					<lightning-layout-item>
-						Values
-						<div class="slds-box boxForFieldsStyle" ondrop={dropToValues}
-							 ondragover={dragOver}>
-							<template for:each={dataSet.exf__PivotConfiguration__c.values} for:item="value"
-									  for:index="idx">
-								<lightning-pill key={value.value} label={value.value} ondblclick={showValueDialog}
-												name={idx}
-												onremove={removeField}></lightning-pill>
-							</template>
-						</div>
-					</lightning-layout-item>
-					<lightning-layout-item>
-						Formula Values
-						<div class="slds-box boxForFieldsStyle">
-							<template for:each={dataSet.exf__PivotConfiguration__c.formulaValues} for:item="FValue"
-									  for:index="idx">
-								<lightning-pill key={FValue.label} label={FValue.label} name={idx}
-												ondblclick={showFormulaValueDialog}
-												onremove={removeFormulaValue}></lightning-pill>
-							</template>
-						</div>
-					</lightning-layout-item>
-					<lightning-layout-item>
-						<div class="slds-p-top_large">
-							<lightning-button label="Add Formula Value" variant="brand"
-											  onclick={showFormulaValueDialog}></lightning-button>
-						</div>
-					</lightning-layout-item>
-				</lightning-layout>
-				<div class="slds-p-around_medium">
-					<table class="tableStyle">
-						<tr>
-							<template for:each={headers} for:item='h'>
-								<td key={h}>
-									<div class="tableHeader">{h}</div>
-								</td>
-							</template>
-						</tr>
-						<template for:each={reportLines} for:item='rl'>
-							<tr key={rl} class={rl.styleClass}>
-								<template for:each={rl.titles} for:item='title'>
-									<td key={title}>
-										{title}
-									</td>
+				<template lwc:if={dataSet.exf__PivotConfiguration__c}>
+					<lightning-layout class="slds-p-left_medium">
+						<lightning-layout-item>
+							Rows
+							<div class="slds-box boxForFieldsStyle" ondrop={dropToRows}
+								 ondragover={dragOver}>
+								<template for:each={dataSet.exf__PivotConfiguration__c.rows} for:item="row">
+									<lightning-pill key={row.value} label={row.value}
+													onremove={removeField}></lightning-pill>
 								</template>
-								<template for:each={rl.values} for:item='value'>
-									<td key={value}>
-										<div class="valueCell">{value}</div>
+							</div>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							Columns
+							<div class="slds-box boxForFieldsStyle" ondrop={dropToColumns}
+								 ondragover={dragOver}>
+								<template for:each={dataSet.exf__PivotConfiguration__c.columns} for:item="column">
+									<lightning-pill key={column.value} label={column.value}
+													onremove={removeField}></lightning-pill>
+								</template>
+							</div>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							Values
+							<div class="slds-box boxForFieldsStyle" ondrop={dropToValues}
+								 ondragover={dragOver}>
+								<template for:each={dataSet.exf__PivotConfiguration__c.values} for:item="value"
+										  for:index="idx">
+									<lightning-pill key={value.value} label={value.value} ondblclick={showValueDialog}
+													name={idx}
+													onremove={removeField}></lightning-pill>
+								</template>
+							</div>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							Formula Values
+							<div class="slds-box boxForFieldsStyle">
+								<template for:each={dataSet.exf__PivotConfiguration__c.formulaValues} for:item="FValue"
+										  for:index="idx">
+									<lightning-pill key={FValue.label} label={FValue.label} name={idx}
+													ondblclick={showFormulaValueDialog}
+													onremove={removeFormulaValue}></lightning-pill>
+								</template>
+							</div>
+						</lightning-layout-item>
+						<lightning-layout-item>
+							<div class="slds-p-top_large">
+								<lightning-button label="Formula" variant="brand" icon-name="utility:add"
+												  onclick={showFormulaValueDialog}></lightning-button>
+							</div>
+						</lightning-layout-item>
+					</lightning-layout>
+					<div class="slds-p-around_medium">
+						<table class="tableStyle">
+							<tr>
+								<template for:each={headers} for:item='h'>
+									<td key={h}>
+										<div class="tableHeader">{h}</div>
 									</td>
 								</template>
 							</tr>
-						</template>
-					</table>
+							<template for:each={reportLines} for:item='rl'>
+								<tr key={rl} class={rl.styleClass}>
+									<template for:each={rl.titles} for:item='title'>
+										<td key={title}>
+											{title}
+										</td>
+									</template>
+									<template for:each={rl.values} for:item='value'>
+										<td key={value}>
+											<div class="valueCell">{value}</div>
+										</td>
+									</template>
+								</tr>
+							</template>
+						</table>
 
-				</div>
+					</div>
+				</template>
 			</template>
 			<!-- PIVOT -->
 

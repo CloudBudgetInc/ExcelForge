@@ -147,21 +147,26 @@ export default class EFDataSetSetup extends LightningElement {
 	//// FIELDS PANEL ////
 	@track showListOfFields = false;
 	@track listOfAvailableFields = [];
-	renderListOfFields = () => {
+	renderListOfFields = async () => {
+		await this.getListOfAvailableFields();
 		this.showListOfFields = true;
 	};
 	closeListOfFields = () => this.showListOfFields = false;
 	getListOfAvailableFields = async () => {
-		const fieldsMap = await getFieldInfoServer({sObjectName: this.dataSet.exf__SourceType__c}).catch(e => _parseServerError('Get List of Fields Error: ', e));
-		alert('FM:' + JSON.stringify(fieldsMap));
-		if (fieldsMap) {
-			const checkedFields = this.dataSet.exf__Fields__c ? this.dataSet.exf__Fields__c.split(',') : [];
-			const labels = Object.keys(fieldsMap).sort();
-			this.listOfAvailableFields = labels.reduce((r, item) => {
-				const checked = checkedFields.find(checkedField => checkedField.toLowerCase().includes(item.toLowerCase()));
-				r.push({label: item, checked: !!checked});
-				return r;
-			}, []);
+		try {
+			const fieldsMap = await getFieldInfoServer({sObjectName: this.dataSet.exf__SourceType__c}).catch(e => _parseServerError('Get List of Fields Error: ', e));
+			alert('FM:' + JSON.stringify(fieldsMap));
+			if (fieldsMap) {
+				const checkedFields = this.dataSet.exf__Fields__c ? this.dataSet.exf__Fields__c.split(',') : [];
+				const labels = Object.keys(fieldsMap).sort();
+				this.listOfAvailableFields = labels.reduce((r, item) => {
+					const checked = checkedFields.find(checkedField => checkedField.toLowerCase().includes(item.toLowerCase()));
+					r.push({label: item, checked: !!checked});
+					return r;
+				}, []);
+			}
+		} catch (e) {
+			_message('error', 'Get list of available fields error : ' + e);
 		}
 	};
 	handleFieldChange = (event) => {
@@ -266,20 +271,24 @@ export default class EFDataSetSetup extends LightningElement {
 	 * Handler opens dialog to setup formula value
 	 */
 	showFormulaValueDialog = (event) => {
-		let idx = event?.target.name;
-		this.renderFormulaValueDialog = true;
-		let formulaValues = this.dataSet.exf__PivotConfiguration__c.formulaValues;
-		if (!formulaValues) { // initialization
-			idx = 0;
-			formulaValues = [{formula: '#1 + #2', label: 'F1', format: 'general'}];
-			this.dataSet.exf__PivotConfiguration__c.formulaValues = formulaValues;
+		try {
+			let idx = event?.target.name;
+			this.renderFormulaValueDialog = true;
+			let formulaValues = this.dataSet.exf__PivotConfiguration__c.formulaValues;
+			if (!formulaValues) { // initialization
+				idx = 0;
+				formulaValues = [{formula: '#1 + #2', label: 'F1', format: 'general'}];
+				this.dataSet.exf__PivotConfiguration__c.formulaValues = formulaValues;
+			}
+			if (idx === undefined) {
+				idx = formulaValues.length;
+				formulaValues.push({formula: '#1 + #2', label: 'F1', format: 'general'});
+			}
+			this.openedFormulaIndex = idx;
+			this.openedFormulaValue = formulaValues[idx];
+		} catch (e) {
+			_message('error', 'Show Formula Value Dialog Error : ' + e);
 		}
-		if (idx === undefined) {
-			idx = formulaValues.length;
-			formulaValues.push({formula: '#1 + #2', label: 'F1', format: 'general'});
-		}
-		this.openedFormulaIndex = idx;
-		this.openedFormulaValue = formulaValues[idx];
 	};
 	closeFormulaValueDialog = () => {
 		this.renderFormulaValueDialog = false;

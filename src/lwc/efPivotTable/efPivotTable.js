@@ -69,9 +69,13 @@ const getRecordKey = (rows, record) => rows.map(f => record[f]).join('');
 const getNewGroup = () => _getCopy(group);
 
 const getExampleTableHeader = () => {
-	headers = [];
-	if (rows) rows.forEach(r => headers.push(r.value));
-	if (values) values.forEach(v => headers.push(v.label));
+	try {
+		headers = [];
+		if (rows) rows.forEach(r => headers.push(r.value));
+		if (values) values.forEach(v => headers.push(v.label));
+	} catch (e) {
+		_message('error', 'Get Example Table Header Error : ' + e);
+	}
 };
 
 const groupData = (dataArray) => {
@@ -162,57 +166,68 @@ const generateReportLines = (gropedData) => {
 	};
 	populateListOfReportLinesAndReturnTotalValues(gropedData, 0);
 	reportLines.forEach(rl => {
-		if (!rl.styleClass) return null; // skip simple lines
-		if (rl.titles.length === 0) {
-			rl.titles = ['Global Total'];
-		} else {
-			rl.titles[rl.titles.length - 1] = 'Total ' + rl.titles[rl.titles.length - 1];
+		try {
+			if (!rl.styleClass) return null; // skip simple lines
+			if (rl.titles.length === 0) {
+				rl.titles = ['Global Total'];
+			} else {
+				rl.titles[rl.titles.length - 1] = 'Total ' + rl.titles[rl.titles.length - 1];
+			}
+			const diff = rows.length - rl.titles.length;
+			//console.log('rl.titles DIF: ' + JSON.stringify(rl.titles) + ' - ' + diff);
+			rl.titles = rl.titles.concat(Array(diff).fill('-'));
+		} catch (e) {
+			_message('error', 'RL Iteration Error : ' + e);
 		}
-		const diff = rows.length - rl.titles.length;
-		//console.log('rl.titles DIF: ' + JSON.stringify(rl.titles) + ' - ' + diff);
-		rl.titles = rl.titles.concat(Array(diff).fill('-'));
 	});
 	//console.log('ReportLines : ' + JSON.stringify(reportLines));
 	return reportLines;
 };
 
 const calculateFormulaLines = () => {
-	const formulaSettings = pivotConfiguration.formulaValues;
-	if (!formulaSettings) return null;
-	const applyFormula = (formula) => {
-		reportLines.forEach(rl => {
-			try {
-				const values = rl.values;
-				let expression = formula;
-				for (let i = 0; i < values.length; i++) {
-					const placeholder = new RegExp(`#${i + 1}`, 'g');
-					expression = expression.replace(placeholder, values[i]);
+	try {
+		const formulaSettings = pivotConfiguration.formulaValues;
+		if (!formulaSettings) return null;
+		const applyFormula = (formula) => {
+			reportLines.forEach(rl => {
+				try {
+					const values = rl.values;
+					let expression = formula;
+					for (let i = 0; i < values.length; i++) {
+						const placeholder = new RegExp(`#${i + 1}`, 'g');
+						expression = expression.replace(placeholder, values[i]);
+					}
+					values.push(eval(expression));
+				} catch (e) {
+					_message('error', 'apply formula Error');
 				}
-				values.push(eval(expression));
-			} catch (e) {
-				_message('error', 'apply formula Error');
-			}
+			});
+		};
+
+		formulaSettings.forEach(fs => {
+			headers.push(fs.label);
+			applyFormula(fs.formula);
 		});
-	};
-
-	formulaSettings.forEach(fs => {
-		headers.push(fs.label);
-		applyFormula(fs.formula);
-	});
-
+	} catch (e) {
+		_message('error', 'Calculate Formula Lines Error : ' + e);
+	}
 };
 
 const applyFormat = () => {
-	_applyFormat();
-	const tableColumns = [...pivotConfiguration.values, ...pivotConfiguration.formulaValues];
-	tableColumns.forEach((col, idx) => {
-		const format = col.format;
-		reportLines.forEach(rl => {
-			const formattedValue = _applyFormat(rl.values[idx], format);
-			rl.values[idx] = formattedValue;
+	try {
+		_applyFormat();
+		let tableColumns = pivotConfiguration.values;
+		if (pivotConfiguration.formulaValues) tableColumns = tableColumns.concat(pivotConfiguration.formulaValues);
+		tableColumns.forEach((col, idx) => {
+			const format = col.format;
+			reportLines.forEach(rl => {
+				const formattedValue = _applyFormat(rl.values[idx], format);
+				rl.values[idx] = formattedValue;
+			});
 		});
-	});
-
+	} catch (e) {
+		_message('error', 'Apply Format Error : ' + e);
+	}
 };
 
 const getResult = () => {
