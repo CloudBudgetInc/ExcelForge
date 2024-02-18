@@ -81,10 +81,11 @@ export default class EFSheetSetup extends LightningElement {
 	};
 
 	cloneSheet = async () => {
+		const sheet = this.sheet;
 		const confirmed = await _confirm('Are you sure to clone the sheet?', 'Confirm', 'warning');
 		if (!confirmed) return null;
 		this.showSpinner = true;
-		this.recordId = await cloneSheetServer({sheet: this.sheet}).catch(e => _parseServerError('Cloning Sheet Error : ', e));
+		this.recordId = await cloneSheetServer({sheet}).catch(e => _parseServerError('Cloning Sheet Error : ', e));
 		await this.getSheet();
 		_message('success', 'Cloned');
 		this.showSpinner = false;

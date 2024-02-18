@@ -35,15 +35,35 @@ public with sharing class EFPageController {
 
 	@AuraEnabled
 	public static void deleteSheetServer(String sheetId) {
+		delete [SELECT Id FROM EFCell__c WHERE EFRow__r.EFSheet__c = :sheetId];
+		delete [SELECT Id FROM EFRow__c WHERE EFSheet__c = :sheetId];
+		delete [SELECT Id FROM EFColumn__c WHERE EFSheet__c = :sheetId];
 		Database.delete(sheetId);
 	}
 
 	@AuraEnabled
 	public static String cloneSheetServer(EFSheet__c sheet) {
+		System.debug('SHEET: ' + sheet);
 		sheet.Name = 'Cloned ' + sheet.Name;
 		sheet.Id = null;
 		insert sheet;
+
+		List<EFColumn__c> columns = new List<EFColumn__c>();
+		List<EFCell__c> cells = new List<EFCell__c>();
+		List<EFRow__c> newRows = new List<EFRow__c>();
+		for (EFColumn__c col : EFColumnSelector.getAllEFColumnsByTemplateIdServer(sheet.EFTemplate__c)) prepareToClone(col, columns, sheet.Id);
+		for (EFRow__c row : EFRowSelector.getAllEFRowsByTemplateIdServer(sheet.EFTemplate__c)) prepareToClone(row, newRows, sheet.Id);
+		insert columns;
+		insert newRows;
+
 		return sheet.Id;
+	}
+
+	private static void prepareToClone(sObject obj, List<sObject> arr, Id sheetId) {
+		obj = obj.clone(false, true, false, false);
+		obj.put('exf__EFSheet__c', sheetId);
+		obj.Id = null;
+		arr.add(obj);
 	}
 
 	@AuraEnabled
