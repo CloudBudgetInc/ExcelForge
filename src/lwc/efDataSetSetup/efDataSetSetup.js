@@ -108,17 +108,19 @@ export default class EFDataSetSetup extends LightningElement {
 
 	handleChanges = (event) => {
 		this.dataSet[event.target.name] = event.target.value;
+		console.log('CHANGED: ' + JSON.stringify(this.dataSet));
 		this.setRenderRule();
 	};
 
 	getDataSet = async () => this.dataSet = await getEFDataSetByIdServer({tId: this.recordId}).catch(e => _parseServerError('Get Data Set Error : ', e));
 
-	saveDataSet = () => {
+	saveDataSet = async () => {
 		this.showSpinner = true;
 		this.showEditSource = false;
 		this.showListOfFields = false;
-		if (this.dataSet.exf__PivotConfiguration__c) this.dataSet.exf__PivotConfiguration__c = JSON.stringify(this.dataSet.exf__PivotConfiguration__c);
-		saveDataSetServer({dataSet: this.dataSet})
+		if (this.dataSet.exf__PivotConfiguration__c && typeof this.dataSet.exf__PivotConfiguration__c === 'object') this.dataSet.exf__PivotConfiguration__c = JSON.stringify(this.dataSet.exf__PivotConfiguration__c);
+		console.log('SAVING: ' + JSON.stringify(this.dataSet));
+		await saveDataSetServer({dataSet: this.dataSet})
 			.then(dataSetId => {
 				this.recordId = dataSetId;
 				this.connectedCallback();
@@ -127,6 +129,14 @@ export default class EFDataSetSetup extends LightningElement {
 				this.showSpinner = false;
 				_parseServerError('Save Data Set Error : ', e)
 			})
+	};
+
+	cloneDataSet = async () => {
+		this.showSpinner = true;
+		delete this.dataSet.Id;
+		this.dataSet.Name += ' Cloned';
+		await this.saveDataSet();
+		window.location.href = '/' + this.recordId;
 	};
 
 	//// SEARCH SOURCE FUNCTION ////
@@ -214,7 +224,10 @@ export default class EFDataSetSetup extends LightningElement {
 			this.sObjects = await getSObjectsByEFDataSetIdServer({dsId: this.recordId}).catch(e => console.error('GET SOBJECT ERROR: ' + e));
 			console.log('SObjects:' + JSON.stringify(this.sObjects));
 			//this.sObjects.forEach(o => console.log(JSON.stringify(o)));
-			if (!this.sObjects || this.sObjects.length === 0) return null;
+			if (!this.sObjects || this.sObjects.length === 0) {
+				_message('info', 'No records');
+				return null;
+			}
 			if (this.dataSet.exf__Type__c === 'Single') {
 				const record = this.sObjects[0];
 				this.singleRecordExampleTable = Object.keys(record).reduce((r, header) => {

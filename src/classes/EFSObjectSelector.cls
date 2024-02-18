@@ -42,10 +42,11 @@ public with sharing class EFSObjectSelector {
 		String fields = dataSet.Fields__c;
 		String f = ' FROM ' + dataSet.SourceType__c;
 		String w;
+		System.debug('dataSet.DataFilter__c = ' + dataSet.DataFilter__c);
 		if (isSingleMode) {
 			w = ' WHERE Id = \'' + dataSet.exf__SingleRecordId__c + '\' ';
 		} else {
-			w = String.isEmpty(dataSet.DataFilter__c) ? '' : ' WHERE ' + dataSet.DataFilter__c.replace('{id}', dataSet.exf__SingleRecordId__c);
+			w = String.isEmpty(dataSet.DataFilter__c) ? '' : ' WHERE ' + dataSet.DataFilter__c;
 		}
 		String ob = '';
 		if (dataSet.exf__PivotConfiguration__c != null) {

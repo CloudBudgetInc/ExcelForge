@@ -82,7 +82,7 @@ export default class EFExcelTable extends LightningElement {
 		this.openedSheet = _getCopy(this.openedSheet);
 		this.tabs.forEach(tab => tab.class = tab.value === selectedSheetId ? 'selectedButton' : '');
 		this.tabs = _getCopy(this.tabs);
-		localStorage.setItem('openedSheetId', this.openedSheet.Id);
+		localStorage.setItem('openedSheetIdFor' + this.tableStructure.template.Id, this.openedSheet.Id);
 	};
 
 	showSheetSetup = (event) => {

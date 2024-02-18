@@ -23,7 +23,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISE
 OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-import {LightningElement, track} from 'lwc';
+import {api, LightningElement, track} from 'lwc';
 import {_message, _parseServerError} from "c/efUtils";
 import getEFTemplateByIdServer from '@salesforce/apex/EFTemplateSelector.getEFTemplateByIdServer';
 import getEFDataSetsByEFTemplateIdServer from '@salesforce/apex/EFDataSetSelector.getEFDataSetsByEFTemplateIdServer';
@@ -39,7 +39,7 @@ export default class EFExcelPreview extends LightningElement {
 	@track testMessage = 'N/A';
 	@track showSpinner = false;
 	@track showTable = false;
-	@track recordId = 'a060700000D913SAAR';
+	@api recordId;
 
 	@track template = {};
 	@track dSets = [];

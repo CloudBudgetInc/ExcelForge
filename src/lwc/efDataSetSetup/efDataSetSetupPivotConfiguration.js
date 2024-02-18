@@ -36,7 +36,16 @@ const getPivotSetupFields = () => {
 			_message('warning', 'Select data to make start setting a pivot table');
 			return null;
 		}
+		console.log('Before 1');
+		console.log(context.dataSet.exf__PivotConfiguration__c);
 		if (!context.dataSet.exf__PivotConfiguration__c) context.dataSet.exf__PivotConfiguration__c = '{"rows":[],"columns":[],"values":[]}';
+		console.log('Before 2');
+		console.log(context.dataSet.exf__PivotConfiguration__c);
+		if (typeof context.dataSet.exf__PivotConfiguration__c === 'string') {
+			context.dataSet.exf__PivotConfiguration__c = JSON.parse(context.dataSet.exf__PivotConfiguration__c);
+		}
+		console.log('Before 3');
+		console.log(context.dataSet.exf__PivotConfiguration__c);
 		if (typeof context.dataSet.exf__PivotConfiguration__c === 'string') {
 			context.dataSet.exf__PivotConfiguration__c = JSON.parse(context.dataSet.exf__PivotConfiguration__c);
 		}

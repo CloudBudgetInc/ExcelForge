@@ -17,27 +17,25 @@ const setContext = (context) => {
 
 const generateTabs = () => {
 	c.tabs = [];
+	const openedSheetId = localStorage.getItem('openedSheetIdFor' + c.tableStructure.template.Id);
 	c.sheets.forEach((sheet, i) => c.tabs.push({
 		label: sheet.Name,
 		value: sheet.Id,
-		class: i === 0 ? 'selectedButton' : ''
+		class: (!openedSheetId && i === 0) || openedSheetId === sheet.Id ? 'selectedButton' : ''
 	}));
 };
 
 const generateTable = () => {
-	//console.log('GENERATE TABLE');
 	try {
 		styleMap = c.styles.reduce((r, st) => {
 			r[st.Id] = st;
 			return r;
 		}, {});
-		//console.log('Style Map = ' + JSON.stringify(styleMap));
 		c.sheets.forEach(sheet => c.allSheets.push(generateSheet(sheet)));
-		const openSheetId = localStorage.getItem('openedSheetId');
+		const openSheetId = localStorage.getItem('openedSheetIdFor' + c.tableStructure.template.Id);
 		let openedSheet;
 		if (openSheetId != null) openedSheet = c.allSheets.find(sheet => sheet.Id === openSheetId);
 		c.openedSheet = openedSheet || c.allSheets[0];
-		//console.log('OPENED SHEET : ' + JSON.stringify(c.openedSheet));
 	} catch (e) {
 		_message('error', 'Generate Table Error : ' + e);
 	}
