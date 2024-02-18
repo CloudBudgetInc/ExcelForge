@@ -33,7 +33,10 @@ const generateTable = () => {
 		}, {});
 		//console.log('Style Map = ' + JSON.stringify(styleMap));
 		c.sheets.forEach(sheet => c.allSheets.push(generateSheet(sheet)));
-		c.openedSheet = c.allSheets[0];
+		const openSheetId = localStorage.getItem('openedSheetId');
+		let openedSheet;
+		if (openSheetId != null) openedSheet = c.allSheets.find(sheet => sheet.Id === openSheetId);
+		c.openedSheet = openedSheet || c.allSheets[0];
 		//console.log('OPENED SHEET : ' + JSON.stringify(c.openedSheet));
 	} catch (e) {
 		_message('error', 'Generate Table Error : ' + e);
